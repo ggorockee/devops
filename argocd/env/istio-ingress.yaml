@@ -1,0 +1,4 @@
+namespace: istio-system
+app_name: istio-ingress
+chart_name: istio-ingress
+project: ggorockee
