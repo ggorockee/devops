@@ -85,7 +85,8 @@ defaults:
   env: {}
 
   # Labels to apply to all resources
-  labels: {}
+  labels:
+    istio: ingressgateway
 
   # Annotations to apply to all resources
   annotations: {}
