@@ -1,0 +1,5 @@
+.idea/
+IaC/terraform/gcp/.terraform
+IaC/terraform/gcp/terraform.tfstate.d/
+IaC/terraform/gcp/.terraform.lock.hcl
+IaC/terraform/gcp/rest.json
