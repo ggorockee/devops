@@ -1,0 +1,4 @@
+namespace: argocd
+app_name: argocd
+chart_name: argo-cd
+project: ggorockee

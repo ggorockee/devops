@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: argo-cd
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/ggorockee/devops/
+        revision: HEAD
+        files:
+          - path: argocd/env/argo-cd.yaml
+  template:
+    metadata:
+      name: '{{app_name}}'
+      namespace: argocd
+    spec:
+      project: '{{project}}'
+      source:
+        repoURL: https://github.com/ggorockee/devops/
+        targetRevision: HEAD
+        path: 'helm-repository/{{chart_name}}'
+        helm:
+          valueFiles:
+            - values.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
