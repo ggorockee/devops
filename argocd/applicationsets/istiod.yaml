@@ -1,15 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: istio-base
+  name: istiod
   namespace: argocd
 spec:
   generators:
     - git:
         repoURL: https://github.com/ggorockee/devops/
-        revision: HEAD
+        revision: main
         files:
-          - path: argocd/env/istio-base.yaml
+          - path: argocd/env/istiod.yaml
+
   template:
     metadata:
       name: '{{app_name}}'
@@ -23,12 +24,20 @@ spec:
         helm:
           valueFiles:
             - values.yaml
+
       ignoreDifferences:
-      - group: admissionregistration.k8s.io
-        kind: ValidatingWebhookConfiguration
-        name: istio-validator-istio-system
-        jsonPointers:
-          - /webhooks/0/failurePolicy
+        - group: admissionregistration.k8s.io
+          kind: ValidatingWebhookConfiguration
+          name: istio-validator-istio-system
+          jsonPointers:
+            - /webhooks/0/failurePolicy
+
+        - group: apps
+          kind: Deployment
+          name: istiod
+          jqPathExpressions:
+            - '.spec.template.spec.containers[].env[]'
+
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{namespace}}'
