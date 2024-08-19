@@ -1,14 +1,14 @@
 resource "google_container_cluster" "primary" {
   name = "${var.project_name}-gke"
-  node_locations = ["us-west1-a", "us-west1-c", "us-west1-b"]
-  remove_default_node_pool = true
-  initial_node_count = 1
+  node_locations = local.k8s.node_locations
+  remove_default_node_pool = local.k8s.remove_default_node_pool
+  initial_node_count = local.k8s.initial_node_count
   network = google_compute_network.main.self_link
   subnetwork = google_compute_subnetwork.private.self_link
-  logging_service          = "logging.googleapis.com/kubernetes"
-  monitoring_service       = "monitoring.googleapis.com/kubernetes"
-  networking_mode          = "VPC_NATIVE"
-  deletion_protection = false
+  logging_service          = local.k8s.logging_service
+  monitoring_service       = local.k8s.monitoring_service
+  networking_mode          = local.k8s.networking_mode
+  deletion_protection = local.k8s.deletion_protection
 
   addons_config {
     http_load_balancing {
@@ -23,14 +23,22 @@ resource "google_container_cluster" "primary" {
     gcs_fuse_csi_driver_config {
       enabled = true
     }
+    dns_cache_config {
+      enabled = false
+    }
+    gcp_filestore_csi_driver_config {
+      enabled = true
+    }
   }
 
+  datapath_provider = local.k8s.datapath_provider
+
   release_channel {
-    channel = "REGULAR"
+    channel = local.k8s.release_channel.channel
   }
 
   workload_identity_config {
-    workload_pool = "ggorockee-2024-08-16.svc.id.goog"
+    workload_pool = local.k8s.workload_identity_config.workload_pool
   }
 
   ip_allocation_policy {
@@ -39,8 +47,24 @@ resource "google_container_cluster" "primary" {
   }
 
   private_cluster_config {
-    enable_private_nodes    = true
-    enable_private_endpoint = false
-    master_ipv4_cidr_block  = "172.16.0.0/28"
+    enable_private_nodes    = local.k8s.private_cluster_config.enable_private_nodes
+    enable_private_endpoint = local.k8s.private_cluster_config.enable_private_endpoint
+    master_ipv4_cidr_block  = local.k8s.private_cluster_config.master_ipv4_cidr_block
+  }
+
+#   logging_config {
+#     enable_components = local.k8s.logging_config.enable_components
+#   }
+
+#   monitoring_config {
+#     enable_components = local.k8s.momitoring_config.enableComponents
+#     managed_prometheus {
+#       enabled = true
+#     }
+#   }
+
+  security_posture_config {
+    mode = local.k8s.security_posture_config.mode
+    vulnerability_mode = local.k8s.security_posture_config.vulnerabilityMode
   }
 }

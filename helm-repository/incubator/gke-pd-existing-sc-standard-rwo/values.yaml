@@ -1,0 +1,68 @@
+pvc:
+  enabled: true
+  name: mysql-pv-claim
+  spec:
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: standard-rwo
+    resources:
+      requests:
+        storage: 4Gi
+
+config:
+  enabled: true
+  name: usermanagement-dbcreation-script
+  data:
+    mysql_usermgmt.sql: |-
+      DROP DATABASE IF EXISTS webappdb;
+      CREATE DATABASE webappdb;
+
+secret:
+  data:
+    MYSQL_ROOT_PASSWORD: "dbpassword11"
+
+
+deployment:
+  replicas: 1
+  strategy: Recreate
+  image:
+    repository: mysql
+    tag: "8.0"
+  port:
+    - "3306"
+  volume:
+    name: mysql-persistent-storage
+
+service:
+  ports:
+    - 3306
+  clusterIP: None
+
+user_mgmt_web_app:
+  name: &mgmt_name usermgmt-webapp
+  deployment:
+    name: *mgmt_name
+    replicas: 1
+    image: stacksimplify/kube-usermgmt-webapp
+    tag: "1.0.0-MySQLDB"
+    ports:
+      - 8080
+
+  secret:
+    name: *mgmt_name
+    data:
+      DB_HOSTNAME: "mysql"
+      DB_PORT: "3306"
+      DB_NAME: "webappdb"
+      DB_USERNAME: "root"
+      DB_PASSWORD: "dbpassword11"
+
+  service:
+    name: *mgmt_name
+    type: LoadBalancer
+    ports:
+      - port: 80
+        targetPort: 8080
+
+
+

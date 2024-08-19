@@ -64,33 +64,24 @@ resource "google_container_node_pool" "spot" {
   }
 
   node_config {
-    preemptible  = false
-    machine_type = "e2-medium"
+    machine_type = local.node_pool.machine_type
 
     labels = {
-      role = "devops"
+      role = terraform.workspace
     }
 
-    disk_size_gb = 50
+    disk_size_gb = local.node_pool.disk_size_gb
     service_account = data.google_service_account.ggorockee.email
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
-      "https://www.googleapis.com/auth/servicecontrol",
-      "https://www.googleapis.com/auth/service.management.readonly",
-      "https://www.googleapis.com/auth/trace.append"
-    ]
+    oauth_scopes = local.node_pool.oauth_scopes
 
-    metadata = {
-      disable_legacy_endpoints = true
-    }
-    image_type = "COS_CONTAINERD"
-    disk_type  = "pd-standard"
+    metadata = local.node_pool.metadata
+    image_type = local.node_pool.image_type
+    disk_type  = local.node_pool.disk_type
+
     shielded_instance_config {
-      enable_integrity_monitoring = true
+      enable_integrity_monitoring = local.node_pool.shielded_instance_config.enable_integrity_monitoring
     }
-    spot = true
+    spot = local.node_pool.spot
   }
 
 }

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.user_mgmt_web_app.service.name}}
+  labels:
+    {{- include "gke-pd-existing-sc-standard-rwo.usermgmtWebapp.selectorLabels" . | nindent 4}}
+spec:
+  type: {{.Values.user_mgmt_web_app.service.type}}
+  selector:
+    {{- include "gke-pd-existing-sc-standard-rwo.usermgmtWebapp.selectorLabels" . | nindent 6}}
+  ports:
+    {{- toYaml .Values.user_mgmt_web_app.service.ports | nindent 4}}

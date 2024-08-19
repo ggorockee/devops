@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.user_mgmt_web_app.deployment.name }}
+spec:
+  replicas: {{ .Values.user_mgmt_web_app.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- include "gke-pd-existing-sc-standard-rwo.usermgmtWebapp.selectorLabels" . | nindent 6}}
+  template:
+    metadata:
+      labels:
+        {{- include "gke-pd-existing-sc-standard-rwo.usermgmtWebapp.selectorLabels" . | nindent 8}}
+    spec:
+      initContainers:
+        - name: init-db
+          image: "busybox:1.31"
+          command:
+            - "sh"
+            - "-c"
+            - 'echo -e "Checking for the availability of MySQL Server deployment"; while ! nc -z mysql 3306; do sleep 1; printf "-"; done; echo -e "  >> MySQL DB Server has started";'
+      containers:
+        - name: {{.Values.user_mgmt_web_app.deployment.name}}
+          image: {{ printf "%s:%s" .Values.user_mgmt_web_app.deployment.image .Values.user_mgmt_web_app.deployment.tag}}
+        {{- if hasKey .Values.user_mgmt_web_app.deployment "ports" }}
+          ports:
+          {{- range .Values.user_mgmt_web_app.deployment.ports }}
+          - containerPort: {{.}}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.user_mgmt_web_app.secret.name }}
+        {{- end}}
