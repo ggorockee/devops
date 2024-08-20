@@ -10,7 +10,7 @@ metadata:
     {{- end }}
   {{- end }}
   name: {{ include "argo-cd.redis.fullname" . }}
-  namespace: {{ include  "argo-cd.namespace" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" .Values.redis.name "name" .Values.redis.name) | nindent 4 }}
 spec:
@@ -65,14 +65,8 @@ spec:
         - ""
         - --appendonly
         - "no"
-        - --requirepass $(REDIS_PASSWORD)
-        env:
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: argocd-redis
-              key: auth
         {{- with (concat .Values.global.env .Values.redis.env) }}
+        env:
           {{- toYaml . | nindent 8 }}
         {{- end }}
         {{- with .Values.redis.envFrom }}
@@ -130,11 +124,6 @@ spec:
           value: {{ printf "redis://localhost:%v" .Values.redis.containerPorts.redis }}
         - name: REDIS_EXPORTER_WEB_LISTEN_ADDRESS
           value: {{ printf "0.0.0.0:%v" .Values.redis.containerPorts.metrics }}
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: argocd-redis
-              key: auth
         {{- with (concat .Values.global.env .Values.redis.exporter.env) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}

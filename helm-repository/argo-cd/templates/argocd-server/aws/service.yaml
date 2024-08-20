@@ -7,9 +7,8 @@ metadata:
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" (print .Values.server.name "-gprc") "name" (print .Values.server.name "-grpc")) | nindent 4 }}
   name: {{ template "argo-cd.server.fullname" . }}-grpc
-  namespace: {{ include  "argo-cd.namespace" . }}
+  namespace: {{ .Release.Namespace | quote }}
 spec:
-  {{- include "argo-cd.dualStack" . | indent 2 }}
   ports:
   - name: {{ .Values.server.service.servicePortHttpName }}
     protocol: TCP

@@ -8,7 +8,7 @@ metadata:
     {{- end }}
   {{- end }}
   name: {{ template "argo-cd.server.fullname" . }}
-  namespace: {{ include  "argo-cd.namespace" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" .Values.server.name "name" .Values.server.name) | nindent 4 }}
 spec:
@@ -243,30 +243,14 @@ spec:
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
-                name: {{ default "argocd-redis" .Values.externalRedis.existingSecret }}
+                name: {{ default (include "argo-cd.redis.fullname" .) .Values.externalRedis.existingSecret }}
                 key: redis-username
                 optional: true
           - name: REDIS_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ default "argocd-redis" .Values.externalRedis.existingSecret }}
-                {{- if .Values.externalRedis.host }}
+                name: {{ default (include "argo-cd.redis.fullname" .) .Values.externalRedis.existingSecret }}
                 key: redis-password
-                optional: true
-                {{- else }}
-                key: auth
-                {{- end }}
-          - name: REDIS_SENTINEL_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: {{ default (include "argo-cd.redis.fullname" .) .Values.externalRedis.existingSecret }}
-                key: redis-sentinel-username
-                optional: true
-          - name: REDIS_SENTINEL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ default (include "argo-cd.redis.fullname" .) .Values.externalRedis.existingSecret }}
-                key: redis-sentinel-password
                 optional: true
           - name: ARGOCD_DEFAULT_CACHE_EXPIRATION
             valueFrom:

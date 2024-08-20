@@ -3,7 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ template "argo-cd.controller.fullname" . }}
-  namespace: {{ default (include  "argo-cd.namespace" .) .Values.controller.metrics.serviceMonitor.namespace | quote }}
+  namespace: {{ default .Release.Namespace .Values.controller.metrics.serviceMonitor.namespace | quote }}
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" .Values.controller.name "name" .Values.controller.name) | nindent 4 }}
     {{- with .Values.controller.metrics.serviceMonitor.selector }}
@@ -43,7 +43,7 @@ spec:
       {{- end }}
   namespaceSelector:
     matchNames:
-      - {{ include "argo-cd.namespace" . }}
+      - {{ .Release.Namespace }}
   selector:
     matchLabels:
       {{- include "argo-cd.selectorLabels" (dict "context" . "component" .Values.controller.name "name" "metrics") | nindent 6 }}
