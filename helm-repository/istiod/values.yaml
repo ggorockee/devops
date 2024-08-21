@@ -37,7 +37,7 @@ defaults:
     extraContainerArgs: []
 
     env: {}
-
+    
     # Settings related to the untaint controller
     # This controller will remove `cni.istio.io/not-ready` from nodes when the istio-cni pod becomes ready
     # It should be noted that cluster operator/owner is responsible for having the taint set by their infrastructure provider when new nodes are added to the cluster; the untaint controller does not taint nodes
@@ -54,7 +54,7 @@ defaults:
     cpu:
       targetAverageUtilization: 80
     memory: {}
-    # targetAverageUtilization: 80
+      # targetAverageUtilization: 80
 
     # Additional volumeMounts to the istiod container
     volumeMounts: []
@@ -198,9 +198,6 @@ defaults:
   # See https://istio.io/docs/reference/config/istio.mesh.v1alpha1/ for all available options
   meshConfig:
     enablePrometheusMerge: true
-    accessLogFile: /dev/stdout
-    ingressService: istio-ingress
-    ingressSelector: ingressgateway
 
   experimental:
     stableValidationPolicy: false
@@ -227,10 +224,10 @@ defaults:
     defaultResources:
       requests:
         cpu: 10m
-        #   memory: 128Mi
-        # limits:
-        #   cpu: 100m
-        #   memory: 128Mi
+      #   memory: 128Mi
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
 
     # Default hub for Istio images.
     # Releases are published to docker hub under 'istio' project.
