@@ -242,7 +242,7 @@ configs:
     ## Server properties
     # -- Run server without TLS
     ## NOTE: This value should be set when you generate params by other means as it changes ports used by ingress template.
-    server.insecure: true
+    server.insecure: false
     # -- Value for base href in index.html. Used if Argo CD is running behind reverse proxy under subpath different from /
     server.basehref: /
     # -- Used if Argo CD is running behind reverse proxy under subpath different from /
@@ -1652,7 +1652,7 @@ server:
     repository: "" # defaults to global.image.repository
     # -- Tag to use for the Argo CD server
     # @default -- `""` (defaults to global.image.tag)
-    tag: "v2.6.7" # defaults to global.image.tag
+    tag: "" # defaults to global.image.tag
     # -- Image pull policy for the Argo CD server
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: "" # IfNotPresent
@@ -1959,7 +1959,7 @@ server:
     # -- Server service labels
     labels: {}
     # -- Server service type
-    type: LoadBalancer
+    type: ClusterIP
     # -- Server service http port for NodePort service type (only if `server.service.type` is set to "NodePort")
     nodePortHttp: 30080
     # -- Server service https port for NodePort service type (only if `server.service.type` is set to "NodePort")
@@ -2153,11 +2153,9 @@ server:
       # -- Google [FrontendConfig] resource, for use with the GKE Ingress Controller
       # @default -- `{}` (See [values.yaml])
       ## Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters
-      frontendConfig:
+      frontendConfig: 
         redirectToHttps:
           enabled: true
-        # redirectToHttps:
-        #   enabled: true
         #   responseCodeName: RESPONSE_CODE
 
       # Managed GKE certificate for ingress hostname
@@ -2167,7 +2165,7 @@ server:
         create: true
         # -- Additional domains for ManagedCertificate resource
         extraDomains: []
-          # - argocd.ggorockee.com
+          # - argocd.example.com
 
   # Dedicated gRPC ingress for ingress controllers that supports only single backend protocol per Ingress resource
   # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-2-multiple-ingress-objects-and-hosts
