@@ -100,7 +100,7 @@ locals {
       "https://www.googleapis.com/auth/cloud-platform"
     ]
 
-    machine_type = "e2-medium"
+    machine_type = "e2-standard-2"
     disk_size_gb = 50
 
     metadata = {
