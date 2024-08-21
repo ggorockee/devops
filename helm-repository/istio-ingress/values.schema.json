@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "$defs": {
     "values": {
       "type": "object",
@@ -99,10 +99,10 @@
               "type": "object",
               "properties": {
                 "cpu": {
-                  "type": ["string", "null"]
+                  "type": "string"
                 },
                 "memory": {
-                  "type": ["string", "null"]
+                  "type": "string"
                 }
               }
             },
@@ -110,10 +110,10 @@
               "type": "object",
               "properties": {
                 "cpu": {
-                  "type": ["string", "null"]
+                  "type": "string"
                 },
                 "memory": {
-                  "type": ["string", "null"]
+                  "type": "string"
                 }
               }
             }
