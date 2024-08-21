@@ -1,0 +1,4 @@
+namespace: sample-app
+app_name: sample-app
+chart_name: sample-app
+project: default
