@@ -30,6 +30,8 @@ spec:
             - configMapRef:
                 name: {{ $value.name }}
             {{- end}}
+            - configMapRef:
+                name: {{ printf "%s-config" .Values.leaderDb.name}}
           image: {{ printf "%s:%s@%s" .Values.leaderDb.statefulset.image.repository .Values.leaderDb.statefulset.image.tag .Values.leaderDb.statefulset.image.sha }}
           name: postgres
           ports:
