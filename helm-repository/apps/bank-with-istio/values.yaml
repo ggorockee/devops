@@ -305,6 +305,25 @@ frontend:
           hosts:
           - "*"
 
+    backendConfig:
+      healthCheck:
+        checkIntervalSec: 30
+        timeoutSec: 5
+        healthyThreshold: 1
+        unhealthyThreshold: 2
+        type: HTTP
+        requestPath: /healthz
+        port: 8080
+
+    frontendConfig:
+      redirectToHttps:
+        enabled: true
+        responseCodeName: PERMANENT_REDIRECT
+
+    managedCertificate:
+      domains:
+        - bank.ggorockee.com
+
 contacts:
   name: &contacts_name contacts
 

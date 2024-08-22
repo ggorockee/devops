@@ -1,0 +1,13 @@
+{{- if and .Values.frontend.ingress.enable }}
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ include "bank-with-istio.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "bank-with-istio.helmLabels" . | nindent 4 }}
+{{- with .Values.frontend.ingress.frontendConfig }}
+spec:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}

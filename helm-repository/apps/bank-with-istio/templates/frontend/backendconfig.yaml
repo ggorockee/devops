@@ -1,0 +1,13 @@
+{{- if and .Values.frontend.ingress.enable }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ include "bank-with-istio.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "bank-with-istio.helmLabels" . | nindent 4 }}
+{{- with .Values.frontend.ingress.backendConfig }}
+spec:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
