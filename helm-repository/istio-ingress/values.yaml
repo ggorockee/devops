@@ -170,3 +170,10 @@ gke_ingress:
           serviceName: istio-ingressgateway
           servicePort: 80
 
+  frontend:
+    labels: {}
+    spec:
+      redirectToHttps:
+      enabled: true
+  
+

@@ -1,0 +1,10 @@
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ include "gateway.name" . }}
+  labels: 
+    {{- toYaml .Values.gke_ingress.frontend.labels | nindent 4}}
+{{- with .Values.gke_ingress.frontend.spec }}
+spec:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
