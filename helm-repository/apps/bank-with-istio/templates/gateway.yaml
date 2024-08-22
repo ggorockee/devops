@@ -12,17 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+{{ if .Values.frontend.ingress.enable }}
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: frontend-gateway
+  name: {{ .Values.frontend.ingress.gateways.name }}
 spec:
   selector:
     istio: ingressgateway # use Istio default gateway implementation
   servers:
-    - port:
-        number: 80
-        name: http
-        protocol: HTTP
-      hosts:
-        - "*"
+    {{- toYaml .Values.frontend.ingress.gateways.servers | nindent 4 }}
+{{ end }}

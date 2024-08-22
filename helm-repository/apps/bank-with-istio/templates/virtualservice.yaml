@@ -12,18 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+{{- if .Values.frontend.ingress.enable }}
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: frontend-ingress
+  name: {{ .Values.frontend.ingress.virtualService.name }}
 spec:
   hosts:
-    - "*"
+    {{- range $key, $value := .Values.frontend.ingress.virtualService.hosts }}
+    - {{ $value | quote }}
+    {{- end }}
   gateways:
-    - frontend-gateway
+    {{- range $key, $value := .Values.frontend.ingress.virtualService.gateways }}
+    - {{ $value | quote }}
+    {{- end }}
   http:
-    - route:
-        - destination:
-            host: frontend
-            port:
-              number: 80
+    {{- toYaml .Values.frontend.ingress.virtualService.http | nindent 4}}
+{{- end}}
