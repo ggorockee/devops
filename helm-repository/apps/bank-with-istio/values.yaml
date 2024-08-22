@@ -281,7 +281,7 @@ frontend:
       runAsUser: 1000
 
   ingress:
-    enable: true
+    enable: false
     virtualService:
       name: frontend-ingress
       hosts:
