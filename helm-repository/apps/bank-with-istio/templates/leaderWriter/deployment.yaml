@@ -15,29 +15,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    application: bank-of-anthos
-    environment: development
-    team: ledger
-    tier: backend
-  name: ledgerwriter
+    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
+    {{- range $index, $value := .Values.leaderWriter.labels }}
+    {{ $index }}: {{ $value }}
+    {{- end}}
+  name: {{ .Values.leaderWriter.name }}
 spec:
   selector:
     matchLabels:
-      app: ledgerwriter
-      application: bank-of-anthos
-      environment: development
-      team: ledger
-      tier: backend
+      {{- include "bank-with-istio.helmLabels" . | nindent 6}}
+      {{- range $index, $value := .Values.leaderWriter.labels }}
+      {{ $index }}: {{ $value }}
+      {{- end}}
   template:
     metadata:
       annotations:
         proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
       labels:
-        app: ledgerwriter
-        application: bank-of-anthos
-        environment: development
-        team: ledger
-        tier: backend
+        {{- include "bank-with-istio.helmLabels" . | nindent 8}}
+        {{- range $index, $value := .Values.leaderWriter.labels }}
+        {{ $index }}: {{ $value }}
+        {{- end}}
     spec:
       containers:
         - env:
@@ -64,37 +62,16 @@ spec:
                 name: service-api-config
             - configMapRef:
                 name: ledger-db-config
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter:v0.6.5@sha256:5b66d6888b87993c8ebe260fe33005c4e4bc2bdae4b5682874e1a078d37ff3b2
-          name: ledgerwriter
+          image: {{ printf "%s:%s@%s" .Values.leaderWriter.deployment.image.repository .Values.leaderWriter.deployment.image.tag .Values.leaderWriter.deployment.image.sha }}
+          name: {{ .Values.leaderWriter.name }}
           readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 5
-            timeoutSeconds: 10
+            {{- toYaml .Values.leaderWriter.deployment.readinessProbe | nindent 12 }}
           resources:
-            limits:
-              cpu: 500m
-              ephemeral-storage: 0.5Gi
-              memory: 512Mi
-            requests:
-              cpu: 100m
-              ephemeral-storage: 0.5Gi
-              memory: 256Mi
+            {{- toYaml .Values.leaderWriter.deployment.resources | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - all
-            privileged: false
-            readOnlyRootFilesystem: true
+            {{- toYaml .Values.leaderWriter.deployment.podSecurityContext | nindent 12 }}
           startupProbe:
-            failureThreshold: 30
-            httpGet:
-              path: /ready
-              port: 8080
-            periodSeconds: 10
+            {{- toYaml .Values.leaderWriter.deployment.startupProbe | nindent 12 }}
           volumeMounts:
             - mountPath: /tmp
               name: tmp
@@ -102,11 +79,8 @@ spec:
               name: publickey
               readOnly: true
       securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
-      serviceAccountName: bank-of-anthos
+        {{- toYaml .Values.leaderWriter.deployment.securityContext | nindent 8 }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       terminationGracePeriodSeconds: 5
       volumes:
         - emptyDir: {}

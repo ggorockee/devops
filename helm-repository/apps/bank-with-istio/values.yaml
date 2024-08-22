@@ -1,7 +1,7 @@
 # account                   [v]
 # balanceReader             [v]
 # contacts                  [v]
-# frontend
+# frontend                  [v]
 # leaderDb                  [v]
 # leaderWriter
 # loadgenerator
@@ -20,11 +20,65 @@
 #     name: {{ $value.name }}
 # {{- end}}
 
+leaderWriter:
+  name: &leader_writer_name ledgerwriter
+  labels:
+    team: ledger
+    tier: backend
+    app: *leader_writer_name
+
+  service:
+    portName: http
+    port: 8080
+    targetPort: 8080
+    type: ClusterIP
+
+  deployment:
+    image:
+      repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter"
+      tag: "v0.6.5"
+      sha: "sha256:5b66d6888b87993c8ebe260fe33005c4e4bc2bdae4b5682874e1a078d37ff3b2"
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 60
+      periodSeconds: 5
+      timeoutSeconds: 10
+    resources:
+      limits:
+        cpu: 500m
+        ephemeral-storage: 0.5Gi
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        ephemeral-storage: 0.5Gi
+        memory: 256Mi
+    podSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - all
+      privileged: false
+      readOnlyRootFilesystem: true
+    startupProbe:
+      failureThreshold: 30
+      httpGet:
+        path: /ready
+        port: 8080
+      periodSeconds: 10
+    securityContext:
+      fsGroup: 1000
+      runAsGroup: 1000
+      runAsNonRoot: true
+      runAsUser: 1000
+
 frontend:
   name: &frontend_name frontend
   labels:
-    team: frontend
+    team: *frontend_name
     tier: web
+    app: *frontend_name
 
   service:
     portName: http
@@ -69,7 +123,7 @@ frontend:
           - all
       privileged: false
       readOnlyRootFilesystem: true
-      
+
     securityContext:
       fsGroup: 1000
       runAsGroup: 1000
