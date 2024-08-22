@@ -3,7 +3,7 @@
 # contacts                  [v]
 # frontend                  [v]
 # leaderDb                  [v]
-# leaderWriter
+# leaderWriter              [v]
 # loadgenerator
 # transiactionHistory
 # userService
@@ -19,6 +19,45 @@
 # - configMapRef:
 #     name: {{ $value.name }}
 # {{- end}}
+
+loadgenerator:
+  name: &loadgenerator_name loadgenerator
+  labels:
+    tier: test
+    team: *loadgenerator_name
+    app: *loadgenerator_name
+
+  deployment:
+    replicas: 1
+    annotations:
+      sidecar.istio.io/rewriteAppHTTPProbers: "true"
+
+    
+    image:
+      repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/loadgenerator"
+      tag: "v0.6.5"
+      sha: "sha256:24369e6b21c773d6afc016997d805b08b1a3ec1c5a6e1d281298180f2f45e0b5"
+
+    resources:
+      limits:
+        cpu: 250m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 512Mi
+    podSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - all
+      privileged: false
+      readOnlyRootFilesystem: true
+    securityContext:
+      fsGroup: 1000
+      runAsGroup: 1000
+      runAsNonRoot: true
+      runAsUser: 1000
+
 
 leaderWriter:
   name: &leader_writer_name ledgerwriter

@@ -15,27 +15,32 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    environment: development
-    team: loadgenerator
-    tier: test
-  name: loadgenerator
+    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
+    {{- range $index, $value := .Values.loadgenerator.labels }}
+    {{ $index }}: {{ $value }}
+    {{- end}}
+  name: {{ .Values.loadgenerator.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.loadgenerator.deployment.replicas }}
   selector:
     matchLabels:
-      app: loadgenerator
-      environment: development
-      team: loadgenerator
-      tier: test
+      {{- include "bank-with-istio.helmLabels" . | nindent 6}}
+      {{- range $index, $value := .Values.loadgenerator.labels }}
+      {{ $index }}: {{ $value }}
+      {{- end}}
   template:
     metadata:
       annotations:
-        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+        {{- with .Values.loadgenerator.deployment.annotations}}
+        {{- range $key, $value := . }}
+        {{$key}}: {{$value | quote}}
+        {{- end}}
+        {{- end}}
       labels:
-        app: loadgenerator
-        environment: development
-        team: loadgenerator
-        tier: test
+        {{- include "bank-with-istio.helmLabels" . | nindent 8}}
+        {{- range $index, $value := .Values.loadgenerator.labels }}
+        {{ $index }}: {{ $value }}
+        {{- end}}
     spec:
       containers:
         - env:
@@ -45,27 +50,14 @@ spec:
               value: "5"
             - name: LOG_LEVEL
               value: error
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/loadgenerator:v0.6.5@sha256:24369e6b21c773d6afc016997d805b08b1a3ec1c5a6e1d281298180f2f45e0b5
-          name: loadgenerator
+          image: {{ printf "%s:%s@%s" .Values.loadgenerator.deployment.image.repository .Values.loadgenerator.deployment.image.tag .Values.loadgenerator.deployment.image.sha }}
+          name: {{ .Values.loadgenerator.name }}
           resources:
-            limits:
-              cpu: 250m
-              memory: 1Gi
-            requests:
-              cpu: 100m
-              memory: 512Mi
+            {{- toYaml .Values.loadgenerator.deployment.resources | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - all
-            privileged: false
-            readOnlyRootFilesystem: true
+          {{- toYaml .Values.loadgenerator.deployment.podSecurityContext | nindent 12 }}
       restartPolicy: Always
       securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
+        {{- toYaml .Values.loadgenerator.deployment.resources | nindent 8 }}
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
