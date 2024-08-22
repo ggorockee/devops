@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
+    {{- range $index, $value := .Values.leaderDb.labels }}
+    {{ $index }}: {{ $value }}
+    {{- end}}
+  name: {{ .Values.leaderDb.name }}
+spec:
+  replicas: {{ .Values.leaderDb.statefulset.replicas }}
+  selector:
+    matchLabels:
+      {{- include "bank-with-istio.helmLabels" . | nindent 6}}
+      {{- range $index, $value := .Values.leaderDb.labels }}
+      {{ $index }}: {{ $value }}
+      {{- end}}
+  serviceName: {{ .Values.leaderDb.name }}
+  template:
+    metadata:
+      labels:
+        {{- include "bank-with-istio.helmLabels" . | nindent 8}}
+        {{- range $index, $value := .Values.leaderDb.labels }}
+        {{ $index }}: {{ $value }}
+        {{- end}}
+    spec:
+      containers:
+        - envFrom:
+            {{- range $key, $value := .Values.extraConfig }}
+            - configMapRef:
+                name: {{ $value.name }}
+            {{- end}}
+          image: {{ printf "%s:%s@%s" .Values.leaderDb.statefulset.image.repository .Values.leaderDb.statefulset.image.tag .Values.leaderDb.statefulset.image.sha }}
+          name: postgres
+          ports:
+            - containerPort: 5432
+          resources:
+            limits:
+              cpu: 250m
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgresdb
+              subPath: postgres
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      volumes:
+        - emptyDir: {}
+          name: postgresdb

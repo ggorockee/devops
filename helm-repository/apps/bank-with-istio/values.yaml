@@ -28,6 +28,38 @@ account:
     replicas: 1
     labels: {}
 
+leaderDb:
+  name: &ledger-db-name ledger-db
+  labels:
+    app: *ledger-db-name
+    team: ledger
+    tier: db
+
+  configmap:
+    data:
+      POSTGRES_DB: postgresdb
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ledger-db:5432/postgresdb
+      SPRING_DATASOURCE_USERNAME: admin
+
+  service:
+    port:
+      name: tcp
+      port: 5432
+      targetPort: 5432
+    type: ClusterIP
+
+  statefulset:
+    replicas: 1
+    image:
+      tag: "v0.6.5"
+      sha: "sha256:cc4fd25f301ab6d46b1312244d6931babc4c6cb66c5cb6d31d4a1adfa318a321"
+      repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledger-db"
+
+
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true

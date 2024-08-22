@@ -60,3 +60,11 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+create the label
+*/}}
+{{- define "bank-with-istio.helmLabels" -}}
+application: bank-of-anthos
+environment: development
+{{- end}}
