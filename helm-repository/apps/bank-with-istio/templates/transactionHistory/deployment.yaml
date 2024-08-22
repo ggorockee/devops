@@ -2,29 +2,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    application: bank-of-anthos
-    environment: development
-    team: ledger
-    tier: backend
-  name: transactionhistory
+    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
+    {{- range $index, $value := .Values.transactionhistory.labels }}
+    {{ $index }}: {{ $value }}
+    {{- end}}
+  name: {{ .Values.transactionhistory.name }}
 spec:
   selector:
     matchLabels:
-      app: transactionhistory
-      application: bank-of-anthos
-      environment: development
-      team: ledger
-      tier: backend
+      {{- include "bank-with-istio.helmLabels" . | nindent 6}}
+      {{- range $index, $value := .Values.transactionhistory.labels }}
+      {{ $index }}: {{ $value }}
+      {{- end}}
   template:
     metadata:
       annotations:
-        proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+        {{- toYaml .Values.transactionhistory.deployment.annotations | nindent 8}}
       labels:
-        app: transactionhistory
-        application: bank-of-anthos
-        environment: development
-        team: ledger
-        tier: backend
+        {{- include "bank-with-istio.helmLabels" . | nindent 8}}
+        {{- range $index, $value := .Values.transactionhistory.labels }}
+        {{ $index }}: {{ $value }}
+        {{- end}}
     spec:
       containers:
         - env:
@@ -57,44 +55,18 @@ spec:
                 name: environment-config
             - configMapRef:
                 name: ledger-db-config
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/transactionhistory:v0.6.5@sha256:54a2b0866df44a50832e71b130f3e069fe8bbce71309fb6cf390b19f64d92c09
+          image: {{ printf "%s:%s@%s" .Values.transactionhistory.deployment.image.repository .Values.transactionhistory.deployment.image.tag .Values.transactionhistory.deployment.image.sha }}
           livenessProbe:
-            httpGet:
-              path: /healthy
-              port: 8080
-            initialDelaySeconds: 120
-            periodSeconds: 5
-            timeoutSeconds: 10
-          name: transactionhistory
+            {{- toYaml .Values.transactionhistory.deployment.livenessProbe | nindent 12 }}
+          name: {{ .Values.transactionhistory.name }}
           readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 5
-            timeoutSeconds: 10
+            {{- toYaml .Values.transactionhistory.deployment.readinessProbe | nindent 12 }}
           resources:
-            limits:
-              cpu: 500m
-              ephemeral-storage: 0.5Gi
-              memory: 512Mi
-            requests:
-              cpu: 100m
-              ephemeral-storage: 0.5Gi
-              memory: 256Mi
+            {{- toYaml .Values.transactionhistory.deployment.resources | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - all
-            privileged: false
-            readOnlyRootFilesystem: true
+            {{- toYaml .Values.transactionhistory.deployment.podSecurityContext | nindent 12 }}
           startupProbe:
-            failureThreshold: 30
-            httpGet:
-              path: /healthy
-              port: 8080
-            periodSeconds: 10
+            {{- toYaml .Values.transactionhistory.deployment.startupProbe | nindent 12 }}
           volumeMounts:
             - mountPath: /tmp
               name: tmp
@@ -102,10 +74,7 @@ spec:
               name: publickey
               readOnly: true
       securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
+        {{- toYaml .Values.transactionhistory.deployment.securityContext | nindent 8 }}
       serviceAccountName: bank-of-anthos
       terminationGracePeriodSeconds: 5
       volumes:

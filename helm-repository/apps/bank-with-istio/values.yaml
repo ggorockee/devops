@@ -4,8 +4,8 @@
 # frontend                  [v]
 # leaderDb                  [v]
 # leaderWriter              [v]
-# loadgenerator
-# transiactionHistory
+# loadgenerator             [v]
+# transiactionHistory       [v]
 # userService
 
 
@@ -20,6 +20,75 @@
 #     name: {{ $value.name }}
 # {{- end}}
 
+transactionhistory:
+  name: &transactionhistory_name transactionhistory
+  labels:
+    team: ledger
+    tier: backend
+    app: *transactionhistory_name
+
+  service:
+    portName: http
+    port: 8080
+    targetPort: 8080
+    type: ClusterIP
+
+  deployment:
+    annotations: 
+      proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+      
+    image:
+      repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/transactionhistory"
+      tag: "v0.6.5"
+      sha: "sha256:54a2b0866df44a50832e71b130f3e069fe8bbce71309fb6cf390b19f64d92c09"
+
+    livenessProbe:
+      httpGet:
+        path: /healthy
+        port: 8080
+      initialDelaySeconds: 120
+      periodSeconds: 5
+      timeoutSeconds: 10
+
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 60
+      periodSeconds: 5
+      timeoutSeconds: 10
+
+    resources:
+      limits:
+        cpu: 500m
+        ephemeral-storage: 0.5Gi
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        ephemeral-storage: 0.5Gi
+        memory: 256Mi
+
+    podSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - all
+      privileged: false
+      readOnlyRootFilesystem: true
+
+    startupProbe:
+      failureThreshold: 30
+      httpGet:
+        path: /healthy
+        port: 8080
+      periodSeconds: 10
+
+    securityContext:
+      fsGroup: 1000
+      runAsGroup: 1000
+      runAsNonRoot: true
+      runAsUser: 1000
+
 loadgenerator:
   name: &loadgenerator_name loadgenerator
   labels:
@@ -32,7 +101,6 @@ loadgenerator:
     annotations:
       sidecar.istio.io/rewriteAppHTTPProbers: "true"
 
-    
     image:
       repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/loadgenerator"
       tag: "v0.6.5"
