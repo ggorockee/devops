@@ -15,29 +15,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    application: bank-of-anthos
-    environment: development
-    team: frontend
-    tier: web
-  name: frontend
+    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
+    {{- range $index, $value := .Values.frontend.labels }}
+    {{ $index }}: {{ $value }}
+    {{- end}}
+  name: {{ .Values.frontend.name }}
 spec:
   selector:
     matchLabels:
-      app: frontend
-      application: bank-of-anthos
-      environment: development
-      team: frontend
-      tier: web
+      {{- include "bank-with-istio.helmLabels" . | nindent 6}}
+      {{- range $index, $value := .Values.frontend.labels }}
+      {{ $index }}: {{ $value }}
+      {{- end}}
   template:
     metadata:
       annotations:
         proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
       labels:
-        app: frontend
-        application: bank-of-anthos
-        environment: development
-        team: frontend
-        tier: web
+        {{- include "bank-with-istio.helmLabels" . | nindent 8}}
+        {{- range $index, $value := .Values.frontend.labels }}
+        {{ $index }}: {{ $value }}
+        {{- end}}
     spec:
       containers:
         - env:
@@ -78,36 +76,16 @@ spec:
                 name: environment-config
             - configMapRef:
                 name: service-api-config
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend:v0.6.5@sha256:d72050f70d12383e4434ad04d189b681dc625f696087ddf0b5df641645c9dafa
+          image: {{ printf "%s:%s@%s" .Values.frontend.deployment.image.repository .Values.frontend.deployment.image.tag .Values.frontend.deployment.image.sha }}
           livenessProbe:
-            httpGet:
-              path: /ready
-              port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 15
-            timeoutSeconds: 30
+            {{- toYaml .Values.frontend.deployment.livenessProbe | nindent 12 }}
           name: front
           readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            timeoutSeconds: 10
+            {{- toYaml .Values.frontend.deployment.readinessProbe | nindent 12 }}
           resources:
-            limits:
-              cpu: 250m
-              memory: 128Mi
-            requests:
-              cpu: 100m
-              memory: 64Mi
+            {{- toYaml .Values.frontend.deployment.resources | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - all
-            privileged: false
-            readOnlyRootFilesystem: true
+            {{- toYaml .Values.frontend.deployment.podSecurityContext | nindent 12 }}
           volumeMounts:
             - mountPath: /tmp
               name: tmp
@@ -115,11 +93,8 @@ spec:
               name: publickey
               readOnly: true
       securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
-      serviceAccountName: bank-of-anthos
+        {{- toYaml .Values.frontend.deployment.securityContext | nindent 8 }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       terminationGracePeriodSeconds: 5
       volumes:
         - emptyDir: {}

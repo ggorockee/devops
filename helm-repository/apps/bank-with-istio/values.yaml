@@ -1,3 +1,136 @@
+# account                   [v]
+# balanceReader             [v]
+# contacts                  [v]
+# frontend
+# leaderDb                  [v]
+# leaderWriter
+# loadgenerator
+# transiactionHistory
+# userService
+
+
+# configmap
+#   for
+#  - name: environment-config
+#  - name: service-api-config
+#  - name: demo-data-config
+
+# {{- range $key, $value := .Values.extraConfig }}
+# - configMapRef:
+#     name: {{ $value.name }}
+# {{- end}}
+
+frontend:
+  name: &frontend_name frontend
+  labels:
+    team: frontend
+    tier: web
+
+  service:
+    portName: http
+    port: 80
+    targetPort: 8080
+    type: LoadBalancer
+
+  deployment:
+    image:
+      repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend"
+      tag: "v0.6.5"
+      sha: "sha256:d72050f70d12383e4434ad04d189b681dc625f696087ddf0b5df641645c9dafa"
+
+    livenessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 60
+      periodSeconds: 15
+      timeoutSeconds: 30
+
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 10
+
+    resources:
+      limits:
+        cpu: 250m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+
+    podSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - all
+      privileged: false
+      readOnlyRootFilesystem: true
+      
+    securityContext:
+      fsGroup: 1000
+      runAsGroup: 1000
+      runAsNonRoot: true
+      runAsUser: 1000
+
+
+
+contacts:
+  name: &contacts_name contacts
+
+  labels:
+    team: accounts
+    tier: backend
+    app: *contacts_name
+
+  service:
+    portName: http
+    port: 8080
+    targetPort: 8080
+    type: ClusterIP
+
+  configmap:
+    name: accounts-db-config
+    data:
+        ACCOUNTS_DB_URI: postgresql://accounts-admin:accounts-pwd@accounts-db:5432/accounts-db
+        POSTGRES_DB: accounts-db
+        POSTGRES_PASSWORD: accounts-pwd
+        POSTGRES_USER: accounts-admin
+
+  
+  deployment:
+    image:
+      repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/contacts"
+      tag: "v0.6.5"
+      sha: "sha256:e451dcac7d34a7bde979c7f02d4c7ebd83a77aff373e1131ce3a2bba2f7fdc1a"
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 10
+    resources:
+      limits:
+        cpu: 250m
+        ephemeral-storage: 0.25Gi
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        ephemeral-storage: 0.25Gi
+        memory: 64Mi
+    securityContext: 
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - all
+      privileged: false
+      readOnlyRootFilesystem: true
+
+
 account:
   name: accounts-db
 
