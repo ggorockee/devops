@@ -33,3 +33,10 @@ spec:
         syncOptions:
           - CreateNamespace=true
           - PrunePropagationPolicy=foreground
+      ignoreDifferences:
+      - group: apps
+        kind: Deployment
+        name: loadgenerator
+        namespace: '{{namespace}}'
+        jsonPointers:
+        - /spec/template/spec/securityContext
