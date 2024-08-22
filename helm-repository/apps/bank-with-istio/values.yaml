@@ -44,7 +44,7 @@ leaderDb:
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_DATASOURCE_URL: jdbc:postgresql://ledger-db:5432/postgresdb
       SPRING_DATASOURCE_USERNAME: admin
-      
+
   service:
     port:
       name: tcp
@@ -58,6 +58,41 @@ leaderDb:
       tag: "v0.6.5"
       sha: "sha256:cc4fd25f301ab6d46b1312244d6931babc4c6cb66c5cb6d31d4a1adfa318a321"
       repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledger-db"
+
+balanceReader:
+  name: &balance-reader-name balancereader
+  labels:
+    app: *balance-reader-name
+    team: ledger
+    tier: backend
+
+  deployment:
+    image:
+      repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader"
+      tag: "v0.6.5"
+      sha: "sha256:de01f16554ae2d0b49ac85116e6307da8c0f8a35f50a0cf25e1e4a4fe18dca83"
+    livenessProbe:
+      httpGet:
+        path: /healthy
+        port: 8080
+      initialDelaySeconds: 120
+      periodSeconds: 5
+      timeoutSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 60
+      periodSeconds: 5
+      timeoutSeconds: 10
+
+  service:
+    ports:
+      name: http
+      port: 8080
+      targetPort: 8080
+    type: ClusterIP
+
 
 
 
