@@ -39,7 +39,7 @@ defaults:
 
   service:
     # Type of service. Set to "None" to disable the service entirely
-    type: LoadBalancer
+    type: NodePort
     ports:
     - name: status-port
       port: 15021
@@ -151,3 +151,22 @@ defaults:
   # Refer to https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
   # for more detail.
   priorityClassName: ""
+
+gke_ingress:
+  managedCertificate:
+    name: istio-default-certificate  
+    domains:
+    - "bank.ggorockee.com"
+
+  rules:
+  - host: "bank.ggorockee.com"
+    http:
+      paths:
+      - path: /*
+        backend:
+          # In this case we don't go directly to app-specific services,
+          # but first to the Istio ingress-gateway
+          # We use port 80 because it is the "ingress-like" port of the ingress-gateway
+          serviceName: istio-ingressgateway
+          servicePort: 80
+
