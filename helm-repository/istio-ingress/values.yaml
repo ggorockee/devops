@@ -162,18 +162,18 @@ gke_ingress:
   - host: "bank.ggorockee.com"
     http:
       paths:
-      - path: /*
-        backend:
-          # In this case we don't go directly to app-specific services,
-          # but first to the Istio ingress-gateway
-          # We use port 80 because it is the "ingress-like" port of the ingress-gateway
-          serviceName: istio-ingressgateway
-          servicePort: 80
+      - backend:
+          service:
+            name: istio-ingressgateway
+            port: 
+              number: 80
+        path: /*
+        pathType: Prefix
 
   frontend:
     labels: {}
     spec:
       redirectToHttps:
-      enabled: true
+        enabled: true
   
 

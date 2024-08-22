@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: istio-ingress
+  namespace: istio-system
+  annotations:
+    # Enable use of manually pre-defined global static IP
+    kubernetes.io/ingress.global-static-ip-name: istio-ingress
+    # Enable use of a GCP-managed certificate through a ManagedCertificate resource
+    networking.gke.io/managed-certificates: istio-default-certificate
+spec:
+  rules:
+  - host: bank.ggorockee.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: istio-ingressgateway
+            port: 
+              number: 80
+        path: /*
+        pathType: Prefix
