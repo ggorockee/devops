@@ -20,6 +20,62 @@
 #     name: {{ $value.name }}
 # {{- end}}
 
+userService:
+  name: &userservice_name userservice
+  labels:
+    team: accounts
+    tier: backend
+    app: *userservice_name
+
+  service:
+    portName: http
+    port: 8080
+    targetPort: 8080
+    type: ClusterIP
+
+  deployment:
+    annotations:
+      proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+    
+    image:
+      repository: "us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice"
+      tag: "v0.6.5"
+      sha: "sha256:f91e0e5bd6cdb16f6b867b2e3e874b23dd01f11592de006776f1dfb136702941"
+
+    port:
+      containerPort: 8080
+      name: http-server
+
+    readinessProbe: 
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 10
+    resources: 
+      limits:
+        cpu: 500m
+        ephemeral-storage: 0.25Gi
+        memory: 256Mi
+      requests:
+        cpu: 260m
+        ephemeral-storage: 0.25Gi
+        memory: 128Mi
+    podSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - all
+      privileged: false
+      readOnlyRootFilesystem: true
+    securityContext:
+      fsGroup: 1000
+      runAsGroup: 1000
+      runAsNonRoot: true
+      runAsUser: 1000
+
+
 transactionhistory:
   name: &transactionhistory_name transactionhistory
   labels:

@@ -2,29 +2,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    application: bank-of-anthos
-    environment: development
-    team: accounts
-    tier: backend
-  name: userservice
+    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
+    {{- range $index, $value := .Values.userService.labels }}
+    {{ $index }}: {{ $value }}
+    {{- end}}
+  name: {{ .Values.userService.name }}
 spec:
   selector:
     matchLabels:
-      app: userservice
-      application: bank-of-anthos
-      environment: development
-      team: accounts
-      tier: backend
+      {{- include "bank-with-istio.helmLabels" . | nindent 6}}
+      {{- range $index, $value := .Values.userService.labels }}
+      {{ $index }}: {{ $value }}
+      {{- end}}
   template:
     metadata:
       annotations:
-        proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+        {{- toYaml .Values.userService.deployment.annotations  | nindent 8}}
       labels:
-        app: userservice
-        application: bank-of-anthos
-        environment: development
-        team: accounts
-        tier: backend
+        {{- include "bank-with-istio.helmLabels" . | nindent 8}}
+        {{- range $index, $value := .Values.userService.labels }}
+        {{ $index }}: {{ $value }}
+        {{- end}}
     spec:
       containers:
         - env:
@@ -45,34 +43,17 @@ spec:
                 name: environment-config
             - configMapRef:
                 name: accounts-db-config
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice:v0.6.5@sha256:f91e0e5bd6cdb16f6b867b2e3e874b23dd01f11592de006776f1dfb136702941
-          name: userservice
+          image: {{ printf "%s:%s@%s" .Values.userService.deployment.image.repository .Values.userService.deployment.image.tag .Values.userService.deployment.image.sha }}
+          name: {{ .Values.userService.name }}
           ports:
-            - containerPort: 8080
-              name: http-server
+            - containerPort: {{ .Values.userService.deployment.port.containerPort }}
+              name: {{ .Values.userService.deployment.port.name }}
           readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            timeoutSeconds: 10
+            {{- toYaml .Values.userService.deployment.readinessProbe | nindent 12 }}
           resources:
-            limits:
-              cpu: 500m
-              ephemeral-storage: 0.25Gi
-              memory: 256Mi
-            requests:
-              cpu: 260m
-              ephemeral-storage: 0.25Gi
-              memory: 128Mi
+            {{- toYaml .Values.userService.deployment.resources | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - all
-            privileged: false
-            readOnlyRootFilesystem: true
+            {{- toYaml .Values.userService.deployment.podSecurityContext | nindent 12 }}
           volumeMounts:
             - mountPath: /tmp
               name: tmp
@@ -80,11 +61,8 @@ spec:
               name: keys
               readOnly: true
       securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
-      serviceAccountName: bank-of-anthos
+        {{- toYaml .Values.userService.deployment.securityContext | nindent 12 }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       terminationGracePeriodSeconds: 5
       volumes:
         - emptyDir: {}
