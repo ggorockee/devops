@@ -1,3 +1,4 @@
+{{- if .Values.gke_ingress.enabled}}
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
@@ -7,3 +8,4 @@ spec:
     {{- range .Values.gke_ingress.managedCertificate.domains }}
     - {{.}}
     {{- end}}
+{{- end}}

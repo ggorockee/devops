@@ -153,6 +153,7 @@ defaults:
   priorityClassName: ""
 
 gke_ingress:
+  enabled: false
   managedCertificate:
     name: istio-default-certificate  
     domains:
