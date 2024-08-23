@@ -153,10 +153,21 @@ defaults:
   priorityClassName: ""
 
 gke_ingress:
+  enabled: true
   managedCertificate:
+    create: false
     name: istio-default-certificate  
     domains:
     - "bank.ggorockee.com"
+
+  gateway:
+    servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+      - "*"
 
   rules:
   - host: "bank.ggorockee.com"

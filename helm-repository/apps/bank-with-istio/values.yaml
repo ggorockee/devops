@@ -281,11 +281,12 @@ frontend:
       runAsUser: 1000
 
   ingress:
-    enable: false
+    enable: true
+    domain: "bank.ggorockee.com"
     virtualService:
       name: frontend-ingress
       hosts:
-        - "*"
+        - "bank.ggorockee.com"
       gateways:
         - frontend-gateway
       http:
@@ -303,7 +304,7 @@ frontend:
             name: http
             protocol: HTTP
           hosts:
-          - "*"
+          - "bank.ggorockee.com"
 
     backendConfig:
       healthCheck:
