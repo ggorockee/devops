@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "bank-with-istio.fullname" . }}
+  annotations:
+    ingressClassName: "gce"
+    networking.gke.io/managed-certificates: {{ include "bank-with-istio.fullname" . }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ include "bank-with-istio.fullname" . }}
+spec:
+  rules:
+  - host: bank.ggorockee.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+        service:
+          name: {{ .Values.frontend.name }}
+          port:
+          number: 80

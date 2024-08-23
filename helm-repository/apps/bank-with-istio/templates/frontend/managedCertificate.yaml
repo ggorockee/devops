@@ -2,7 +2,7 @@
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: {{ include "bank-with-istio.name" . }}
+  name: {{ include "bank-with-istio.fullname" . }}
 spec:
   domains:
     - {{ .Values.frontend.ingress.domain }}
