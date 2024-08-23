@@ -282,6 +282,7 @@ frontend:
 
   ingress:
     enable: true
+    domain: "bank.ggorockee.com"
     virtualService:
       name: frontend-ingress
       hosts:
