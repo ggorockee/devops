@@ -1,0 +1,71 @@
+{{ $fullname := include "bookinfo.fullname" . }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-reviews" $fullname}}
+  labels:
+    {{- include "bookinfo.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.reviews.autoscaling.enabled }}
+  replicas: {{ .Values.reviews.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- toYaml .Values.reviews.podLabels | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.reviews.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- with .Values.reviews.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.reviews.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ .Values.reviews.serviceAccount.name }}
+      securityContext:
+        {{- toYaml .Values.reviews.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ printf "%s-reviews" .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.reviews.securityContext | nindent 12 }}
+          image: "{{ .Values.reviews.image.repository }}:{{ .Values.reviews.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.reviews.image.pullPolicy }}
+          ports:
+            {{- toYaml .Values.reviews.ports | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.reviews.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.reviews.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.reviews.resources | nindent 12 }}
+          {{- with .Values.reviews.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.reviews.env }}
+          env:
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+
+      {{- with .Values.reviews.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.reviews.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.reviews.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.reviews.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

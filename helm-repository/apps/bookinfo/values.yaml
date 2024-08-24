@@ -204,6 +204,118 @@ ratings:
 
   affinity: {}
 
+reviews:
+  name: &reviews_name reviews
+  replicaCount: 1
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  podAnnotations: {}
+  podLabels:
+    app.kubernetes.io/name: *reviews_name
+    app.kubernetes.io/instance: *reviews_name
+    app: *reviews_name
+    version: v1
+
+  image:
+    repository: docker.io/istio/examples-bookinfo-reviews-v1
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "1.20.1"
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Automatically mount a ServiceAccount's API credentials?
+    automount: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+  
+  imagePullSecrets: []
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  ports:
+    - name: http
+      containerPort: 9080
+      protocol: TCP
+
+  service:
+    type: ClusterIP
+    ports: 
+      - name: http 
+        protocol: TCP
+        port: 9080
+        targetPort: 9080
+        
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+
+  # Additional volumes on the output Deployment definition.
+  volumes:
+  - name: wlp-output
+    emptyDir: {}
+  - name: tmp
+    emptyDir: {}
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+  - name: wlp-output
+    mountPath: /opt/ibm/wlp/output
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  env:
+  - name: LOG_DIR
+    value: "/tmp/logs"
 
 
 
