@@ -1,4 +1,0 @@
-namespace: bank-with-istio
-app_name: bank-with-istio
-chart_name: bank-with-istio
-project: ggorockee
