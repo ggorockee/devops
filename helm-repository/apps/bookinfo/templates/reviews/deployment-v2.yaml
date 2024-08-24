@@ -20,7 +20,7 @@ spec:
       serviceAccountName: bookinfo-reviews
       containers:
       - name: reviews
-        image: docker.io/istio/examples-bookinfo-reviews-v2:1.19.1
+        image: docker.io/istio/examples-bookinfo-reviews-v2:latest
         imagePullPolicy: IfNotPresent
         env:
         - name: LOG_DIR
