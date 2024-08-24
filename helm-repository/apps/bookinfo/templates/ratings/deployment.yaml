@@ -37,9 +37,7 @@ spec:
           image: "{{ .Values.ratings.image.repository }}:{{ .Values.ratings.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.ratings.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: {{ .Values.ratings.service.port }}
-              protocol: TCP
+            {{- toYaml .Values.ratings.ports | nindent 12 }}
           livenessProbe:
             {{- toYaml .Values.ratings.livenessProbe | nindent 12 }}
           readinessProbe:
