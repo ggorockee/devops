@@ -1,0 +1,13 @@
+{{ $fullname := include "bookinfo.fullname" . }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-details" $fullname}}
+  labels:
+    {{- include "bookinfo.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.details.service.type }}
+  ports:
+    {{- toYaml .Values.details.service.ports | nindent 4 }}
+  selector:
+    {{- toYaml .Values.details.podLabels | nindent 4 }}
