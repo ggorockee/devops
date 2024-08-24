@@ -39,7 +39,7 @@ defaults:
 
   service:
     # Type of service. Set to "None" to disable the service entirely
-    type: LoadBalancer
+    type: NodePort
     ports:
     - name: status-port
       port: 15021
@@ -153,7 +153,7 @@ defaults:
   priorityClassName: ""
 
 gke_ingress:
-  enabled: true
+  enabled: false
   managedCertificate:
     create: false
     name: istio-default-certificate  

@@ -1,0 +1,35 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-certificate-no: "31674"
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    meta.helm.sh/release-name: istio-ingress
+    meta.helm.sh/release-namespace: istio-system
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: {{ include "gateway.name" . }}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: {{ include "gateway.name" . }}
+    app.kubernetes.io/part-of: {{ include "gateway.name" . }}
+    app.kubernetes.io/version: v2.10.9
+    argocd.argoproj.io/instance: {{ include "gateway.name" . }}
+  name: {{ include "gateway.name" . }}
+spec:
+  ingressClassName: alb
+  rules:
+  - host: "*"
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ include "gateway.name" . }}
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
