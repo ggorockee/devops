@@ -234,7 +234,7 @@ frontend:
     portName: http
     port: 80
     targetPort: 8080
-    type: LoadBalancer
+    type: NodePort
 
   deployment:
     image:
@@ -282,11 +282,11 @@ frontend:
 
   ingress:
     enable: true
-    domain: "bank.ggorockee.com"
+    domain: &app_domain "bank.ggorockee.com" 
     virtualService:
       name: frontend-ingress
       hosts:
-        - "bank.ggorockee.com"
+        - *app_domain
       gateways:
         - frontend-gateway
       http:
@@ -304,7 +304,7 @@ frontend:
             name: http
             protocol: HTTP
           hosts:
-          - "bank.ggorockee.com"
+          - *app_domain
 
     backendConfig:
       healthCheck:

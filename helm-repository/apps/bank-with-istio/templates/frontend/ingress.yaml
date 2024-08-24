@@ -3,12 +3,13 @@ kind: Ingress
 metadata:
   name: {{ include "bank-with-istio.fullname" . }}
   annotations:
-    ingressClassName: "gce"
-    networking.gke.io/managed-certificates: {{ include "bank-with-istio.fullname" . }}
-    networking.gke.io/v1beta1.FrontendConfig: {{ include "bank-with-istio.fullname" . }}
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-certificate-no: "31674"
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
 spec:
+  ingressClassName: alb
   rules:
-  - host: bank.ggorockee.com
+  - host: {{ .Values.frontend.ingress.domain }}
     http:
       paths:
       - path: /
