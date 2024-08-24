@@ -23,8 +23,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-  - host: "*"
-    http:
+  - http:
       paths:
       - backend:
           service:
