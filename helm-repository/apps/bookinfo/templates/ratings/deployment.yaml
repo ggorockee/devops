@@ -20,7 +20,7 @@ spec:
       serviceAccountName: bookinfo-ratings
       containers:
       - name: ratings
-        image: docker.io/istio/examples-bookinfo-ratings-v1:latest
+        image: docker.io/istio/examples-bookinfo-ratings-v1:1.20.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9080
