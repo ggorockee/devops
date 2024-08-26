@@ -1,12 +1,8 @@
-{{- if .Values.gke_ingress.enabled}}
 apiVersion: networking.gke.io/v1beta1
 kind: FrontendConfig
 metadata:
-  name: {{ include "gateway.name" . }}
-  labels: 
-    {{- toYaml .Values.gke_ingress.frontend.labels | nindent 4}}
-{{- with .Values.gke_ingress.frontend.spec }}
+  name: istio-ingress
 spec:
-  {{- toYaml . | nindent 2 }}
-{{- end }}
-{{- end}}
+  redirectToHttps:
+    enabled: true
+    responseCodeName: MOVED_PERMANENTLY_DEFAULT

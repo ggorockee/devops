@@ -1,11 +1,8 @@
-{{- if and (.Values.gke_ingress.enabled) (.Values.gke_ingress.managedCertificate.create) }}
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: {{ include "gateway.name" . }}
+  name: istio-ingress
 spec:
   domains:
-    {{- range .Values.gke_ingress.managedCertificate.domains }}
-    - {{.}}
-    {{- end}}
-{{- end}}
+    - ggorockee.com
+    - *.ggorockee.com
