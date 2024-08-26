@@ -4,5 +4,4 @@ metadata:
   name: istio-ingress
 spec:
   domains:
-    - ggorockee.com
     - bank.ggorockee.com
