@@ -115,8 +115,8 @@ spec:
             - mountPath: /tmp/.ssh
               name: publickey
               readOnly: true
-          ports:
-          - containerPort: 8080
+          # ports:
+          # - containerPort: 8080
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
