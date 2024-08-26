@@ -2159,6 +2159,7 @@ server:
         redirectToHttps:
           enabled: true
         #   responseCodeName: RESPONSE_CODE
+        sslPolicy: gke-ingress-ssl-policy
 
       # Managed GKE certificate for ingress hostname
       managedCertificate:
