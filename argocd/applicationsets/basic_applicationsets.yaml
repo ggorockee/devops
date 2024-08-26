@@ -40,3 +40,17 @@ spec:
         namespace: '{{namespace}}'
         jsonPointers:
         - /spec/template/spec/securityContext
+      
+      - group: apps
+        kind: StatefulSet
+        name: accounts-db
+        namespace: '{{namespace}}'
+        jsonPointers:
+        - /spec/template/spec/serviceAccount
+
+      - group: apps
+        kind: StatefulSet
+        name: ledger-db
+        namespace: '{{namespace}}'
+        jsonPointers:
+        - /spec/template/spec/serviceAccount

@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: istio-ingress
   annotations:
-    ingress.kubernetes.io/static-ip: istio-ingress
+    kubernetes.io/ingress.global-static-ip-name: istio-ingress
     networking.gke.io/managed-certificates: istio-ingress
     kubernetes.io/ingress.class: "gce"  # Updated annotation
 spec:
