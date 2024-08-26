@@ -32,4 +32,4 @@ spec:
     environment: development
     team: frontend
     tier: web
-  type: LoadBalancer
+  type: ClusterIP
