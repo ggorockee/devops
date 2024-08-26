@@ -11,23 +11,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.balanceReader.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  name: {{ .Values.balanceReader.name }}
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: backend
+  name: ledgerwriter
 spec:
   ports:
-    - name: {{ .Values.balanceReader.service.ports.name }}
-      port: {{ .Values.balanceReader.service.ports.port }}
-      targetPort: {{ .Values.balanceReader.service.ports.targetPort }}
+    - name: http
+      port: 8080
+      targetPort: 8080
   selector:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.balanceReader.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  type: {{ .Values.balanceReader.service.type }}
+    app: ledgerwriter
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: backend
+  type: ClusterIP

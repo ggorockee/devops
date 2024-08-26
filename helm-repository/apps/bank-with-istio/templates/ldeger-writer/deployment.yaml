@@ -16,27 +16,29 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.balanceReader.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  name: {{ .Values.balanceReader.name }}
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: backend
+  name: ledgerwriter
 spec:
   selector:
     matchLabels:
-      {{- include "bank-with-istio.helmLabels" . | nindent 6}}
-      {{- range $index, $value := .Values.balanceReader.labels }}
-      {{ $index }}: {{ $value }}
-      {{- end}}
+      app: ledgerwriter
+      application: bank-of-anthos
+      environment: development
+      team: ledger
+      tier: backend
   template:
     metadata:
       annotations:
         proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
       labels:
-        {{- include "bank-with-istio.helmLabels" . | nindent 8}}
-        {{- range $index, $value := .Values.balanceReader.labels }}
-        {{ $index }}: {{ $value }}
-        {{- end}}
+        app: ledgerwriter
+        application: bank-of-anthos
+        environment: development
+        team: ledger
+        tier: backend
     spec:
       containers:
         - env:
@@ -48,10 +50,6 @@ spec:
               value: "true"
             - name: ENABLE_METRICS
               value: "true"
-            - name: POLL_MS
-              value: "100"
-            - name: CACHE_SIZE
-              value: "1000000"
             - name: JVM_OPTS
               value: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xms256m -Xmx512m
             - name: LOG_LEVEL
@@ -61,20 +59,21 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
           envFrom:
-            {{- range $key, $value := .Values.extraConfig }}
             - configMapRef:
-                name: {{ $value.name }}
-            {{- end}}
-            {{- with .Values.leaderDb}}
+                name: environment-config
             - configMapRef:
-                name: {{ printf "%s-config" .name}}
-            {{- end }}
-          image: {{ printf "%s:%s@%s" .Values.balanceReader.deployment.image.repository .Values.balanceReader.deployment.image.tag .Values.balanceReader.deployment.image.sha }}
-          livenessProbe:
-            {{- toYaml .Values.balanceReader.deployment.livenessProbe | nindent 12 }}
-          name: {{ .Values.balanceReader.name }}
+                name: service-api-config
+            - configMapRef:
+                name: ledger-db-config
+          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter:v0.6.5@sha256:5b66d6888b87993c8ebe260fe33005c4e4bc2bdae4b5682874e1a078d37ff3b2
+          name: ledgerwriter
           readinessProbe:
-            {{- toYaml .Values.balanceReader.deployment.readinessProbe | nindent 12 }}
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 5
+            timeoutSeconds: 10
           resources:
             limits:
               cpu: 500m
@@ -94,7 +93,7 @@ spec:
           startupProbe:
             failureThreshold: 30
             httpGet:
-              path: /healthy
+              path: /ready
               port: 8080
             periodSeconds: 10
           volumeMounts:
@@ -108,7 +107,7 @@ spec:
         runAsGroup: 1000
         runAsNonRoot: true
         runAsUser: 1000
-      serviceAccountName: {{ .Values.serviceAccount.name }}
+      serviceAccountName: bank-of-anthos
       terminationGracePeriodSeconds: 5
       volumes:
         - emptyDir: {}

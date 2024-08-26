@@ -11,23 +11,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.userService.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  name: {{ .Values.userService.name }}
+    application: bank-of-anthos
+    environment: development
+    team: accounts
+    tier: backend
+  name: userservice
 spec:
   ports:
-    - name: {{ .Values.userService.service.portName }}
-      port: {{ .Values.userService.service.port }}
-      targetPort: {{ .Values.userService.service.targetPort }}
+    - name: http
+      port: 8080
+      targetPort: 8080
   selector:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.userService.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  type: {{ .Values.userService.service.type }}
+    app: userservice
+    application: bank-of-anthos
+    environment: development
+    team: accounts
+    tier: backend
+  type: ClusterIP

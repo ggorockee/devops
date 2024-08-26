@@ -18,27 +18,27 @@ metadata:
   labels:
     application: bank-of-anthos
     environment: development
-    team: frontend
-    tier: web
-  name: frontend
+    team: ledger
+    tier: backend
+  name: balancereader
 spec:
   selector:
     matchLabels:
-      app: frontend
+      app: balancereader
       application: bank-of-anthos
       environment: development
-      team: frontend
-      tier: web
+      team: ledger
+      tier: backend
   template:
     metadata:
       annotations:
         proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
       labels:
-        app: frontend
+        app: balancereader
         application: bank-of-anthos
         environment: development
-        team: frontend
-        tier: web
+        team: ledger
+        tier: backend
     spec:
       containers:
         - env:
@@ -48,60 +48,50 @@ spec:
               value: "8080"
             - name: ENABLE_TRACING
               value: "true"
-            - name: SCHEME
-              value: http
+            - name: ENABLE_METRICS
+              value: "true"
+            - name: POLL_MS
+              value: "100"
+            - name: CACHE_SIZE
+              value: "1000000"
+            - name: JVM_OPTS
+              value: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xms256m -Xmx512m
             - name: LOG_LEVEL
               value: info
-            - name: DEFAULT_USERNAME
+            - name: NAMESPACE
               valueFrom:
-                configMapKeyRef:
-                  key: DEMO_LOGIN_USERNAME
-                  name: demo-data-config
-            - name: DEFAULT_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  key: DEMO_LOGIN_PASSWORD
-                  name: demo-data-config
-            - name: REGISTERED_OAUTH_CLIENT_ID
-              valueFrom:
-                configMapKeyRef:
-                  key: DEMO_OAUTH_CLIENT_ID
-                  name: oauth-config
-                  optional: true
-            - name: ALLOWED_OAUTH_REDIRECT_URI
-              valueFrom:
-                configMapKeyRef:
-                  key: DEMO_OAUTH_REDIRECT_URI
-                  name: oauth-config
-                  optional: true
+                fieldRef:
+                  fieldPath: metadata.namespace
           envFrom:
             - configMapRef:
                 name: environment-config
             - configMapRef:
-                name: service-api-config
-          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend:v0.6.5@sha256:d72050f70d12383e4434ad04d189b681dc625f696087ddf0b5df641645c9dafa
+                name: ledger-db-config
+          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader:v0.6.5@sha256:de01f16554ae2d0b49ac85116e6307da8c0f8a35f50a0cf25e1e4a4fe18dca83
           livenessProbe:
             httpGet:
-              path: /ready
+              path: /healthy
               port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 15
-            timeoutSeconds: 30
-          name: front
+            initialDelaySeconds: 120
+            periodSeconds: 5
+            timeoutSeconds: 10
+          name: balancereader
           readinessProbe:
             httpGet:
               path: /ready
               port: 8080
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             periodSeconds: 5
             timeoutSeconds: 10
           resources:
             limits:
-              cpu: 250m
-              memory: 128Mi
+              cpu: 500m
+              ephemeral-storage: 0.5Gi
+              memory: 512Mi
             requests:
               cpu: 100m
-              memory: 64Mi
+              ephemeral-storage: 0.5Gi
+              memory: 256Mi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -109,6 +99,12 @@ spec:
                 - all
             privileged: false
             readOnlyRootFilesystem: true
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /healthy
+              port: 8080
+            periodSeconds: 10
           volumeMounts:
             - mountPath: /tmp
               name: tmp

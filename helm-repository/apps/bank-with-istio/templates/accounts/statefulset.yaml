@@ -16,35 +16,42 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    {{- toYaml .Values.account.labels | nindent 4 }}
-  name: {{ .Values.account.name }}
+    application: bank-of-anthos
+    environment: development
+    team: accounts
+    tier: db
+  name: accounts-db
 spec:
-  replicas: {{ .Values.account.statefulset.replicas }}
+  replicas: 1
   selector:
     matchLabels:
-      {{- toYaml .Values.account.labels | nindent 6 }}
-  serviceName: {{ .Values.account.name }}
+      app: accounts-db
+      application: bank-of-anthos
+      environment: development
+      team: accounts
+      tier: db
+  serviceName: accounts-db
   template:
     metadata:
       labels:
-        {{- toYaml .Values.account.labels | nindent 8 }}
+        app: accounts-db
+        application: bank-of-anthos
+        environment: development
+        team: accounts
+        tier: db
     spec:
       containers:
         - envFrom:
-            {{- range $key, $value := .Values.extraConfig }}
             - configMapRef:
-                name: {{ $value.name }}
-            {{- end}}
-            {{- with .Values.leaderDb}}
+                name: environment-config
             - configMapRef:
-                name: {{ printf "%s-config" .name}}
-            {{- end }}
+                name: accounts-db-config
+            - configMapRef:
+                name: demo-data-config
           image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/accounts-db:v0.6.5@sha256:abb955756a82b115e0fd9c5fa1527ae1a744b398b357fd6d7a26348feccad181
-          name: {{ .Values.account.name }}
+          name: accounts-db
           ports:
-            {{- with index .Values.account.service.ports 0}}
-            - containerPort: {{ .targetPort }}
-            {{- end}}
+            - containerPort: 5432
           resources:
             limits:
               cpu: 250m
@@ -56,7 +63,8 @@ spec:
             - mountPath: /var/lib/postgresql/data
               name: postgresdb
               subPath: postgres
-      serviceAccountName: {{ .Values.serviceAccount.name }}
+      serviceAccount: bank-of-anthos
+      serviceAccountName: default
       volumes:
         - emptyDir: {}
           name: postgresdb

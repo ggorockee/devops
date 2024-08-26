@@ -13,16 +13,9 @@
 # limitations under the License.
 
 apiVersion: v1
-kind: Service
+kind: ConfigMap
 metadata:
-  labels:
-    {{- range $key, $value := .Values.account.labels }}
-    {{ $key }}: {{ $value | quote }}
-    {{- end }}
-  name: {{ .Values.account.name }}
-spec:
-  ports:
-    {{- toYaml .Values.account.service.ports | nindent 4 }}
-  selector:
-    {{- toYaml .Values.account.labels | nindent 4}}
-  type: {{ .Values.account.service.type }}
+  name: environment-config
+data:
+  LOCAL_ROUTING_NUM: "883745000"
+  PUB_KEY_PATH: "/tmp/.ssh/publickey"

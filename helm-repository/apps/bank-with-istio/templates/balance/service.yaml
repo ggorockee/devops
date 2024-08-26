@@ -13,15 +13,23 @@
 # limitations under the License.
 
 apiVersion: v1
-data:
-  {{- range $key, $value := .Values.contacts.configmap.data }}
-  {{ $key }}: {{ $value | quote }}
-  {{- end }}
-kind: ConfigMap
+kind: Service
 metadata:
   labels:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.contacts.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  name: accounts-db-config
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: backend
+  name: balancereader
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: balancereader
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: backend
+  type: ClusterIP

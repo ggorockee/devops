@@ -11,23 +11,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.transactionhistory.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  name: {{ .Values.transactionhistory.name }}
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: backend
+  name: transactionhistory
 spec:
   ports:
-    - name: {{ .Values.transactionhistory.service.portName }}
-      port: {{ .Values.transactionhistory.service.port }}
-      targetPort: {{ .Values.transactionhistory.service.targetPort }}
+    - name: http
+      port: 8080
+      targetPort: 8080
   selector:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.transactionhistory.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  type: {{ .Values.transactionhistory.service.type }}
+    app: transactionhistory
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: backend
+  type: ClusterIP

@@ -16,19 +16,21 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.leaderDb.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  name: {{ .Values.leaderDb.name }}
+    application: bank-of-anthos
+    environment: development
+    team: accounts
+    tier: db
+  name: accounts-db
 spec:
   ports:
-    - name: {{ .Values.leaderDb.service.port.name | default "tcp" }}
-      port: {{ .Values.leaderDb.service.port.port }}
-      targetPort: {{ .Values.leaderDb.service.port.targetPort }}
+    - name: tcp
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
   selector:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.leaderDb.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  type: {{ .Values.leaderDb.service.type }}
+    app: accounts-db
+    application: bank-of-anthos
+    environment: development
+    team: accounts
+    tier: db
+  type: ClusterIP

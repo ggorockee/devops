@@ -11,23 +11,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.leaderWriter.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  name: {{ .Values.leaderWriter.name }}
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: db
+  name: ledger-db
 spec:
   ports:
-    - name: {{ .Values.leaderWriter.service.portName }}
-      port: {{ .Values.leaderWriter.service.port }}
-      targetPort: {{ .Values.leaderWriter.service.targetPort }}
+    - name: tcp
+      port: 5432
+      targetPort: 5432
   selector:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.leaderWriter.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  type: {{ .Values.leaderWriter.service.type }}
+    app: ledger-db
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: db
+  type: ClusterIP

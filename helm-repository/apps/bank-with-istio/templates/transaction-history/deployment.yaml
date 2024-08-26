@@ -11,31 +11,34 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.leaderWriter.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  name: {{ .Values.leaderWriter.name }}
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: backend
+  name: transactionhistory
 spec:
   selector:
     matchLabels:
-      {{- include "bank-with-istio.helmLabels" . | nindent 6}}
-      {{- range $index, $value := .Values.leaderWriter.labels }}
-      {{ $index }}: {{ $value }}
-      {{- end}}
+      app: transactionhistory
+      application: bank-of-anthos
+      environment: development
+      team: ledger
+      tier: backend
   template:
     metadata:
       annotations:
         proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
       labels:
-        {{- include "bank-with-istio.helmLabels" . | nindent 8}}
-        {{- range $index, $value := .Values.leaderWriter.labels }}
-        {{ $index }}: {{ $value }}
-        {{- end}}
+        app: transactionhistory
+        application: bank-of-anthos
+        environment: development
+        team: ledger
+        tier: backend
     spec:
       containers:
         - env:
@@ -47,6 +50,14 @@ spec:
               value: "true"
             - name: ENABLE_METRICS
               value: "true"
+            - name: POLL_MS
+              value: "100"
+            - name: CACHE_SIZE
+              value: "1000"
+            - name: CACHE_MINUTES
+              value: "60"
+            - name: HISTORY_LIMIT
+              value: "100"
             - name: JVM_OPTS
               value: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xms256m -Xmx512m
             - name: LOG_LEVEL
@@ -59,19 +70,45 @@ spec:
             - configMapRef:
                 name: environment-config
             - configMapRef:
-                name: service-api-config
-            - configMapRef:
                 name: ledger-db-config
-          image: {{ printf "%s:%s@%s" .Values.leaderWriter.deployment.image.repository .Values.leaderWriter.deployment.image.tag .Values.leaderWriter.deployment.image.sha }}
-          name: {{ .Values.leaderWriter.name }}
+          image: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/transactionhistory:v0.6.5@sha256:54a2b0866df44a50832e71b130f3e069fe8bbce71309fb6cf390b19f64d92c09
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 5
+            timeoutSeconds: 10
+          name: transactionhistory
           readinessProbe:
-            {{- toYaml .Values.leaderWriter.deployment.readinessProbe | nindent 12 }}
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 5
+            timeoutSeconds: 10
           resources:
-            {{- toYaml .Values.leaderWriter.deployment.resources | nindent 12 }}
+            limits:
+              cpu: 500m
+              ephemeral-storage: 0.5Gi
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              ephemeral-storage: 0.5Gi
+              memory: 256Mi
           securityContext:
-            {{- toYaml .Values.leaderWriter.deployment.podSecurityContext | nindent 12 }}
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - all
+            privileged: false
+            readOnlyRootFilesystem: true
           startupProbe:
-            {{- toYaml .Values.leaderWriter.deployment.startupProbe | nindent 12 }}
+            failureThreshold: 30
+            httpGet:
+              path: /healthy
+              port: 8080
+            periodSeconds: 10
           volumeMounts:
             - mountPath: /tmp
               name: tmp
@@ -79,8 +116,11 @@ spec:
               name: publickey
               readOnly: true
       securityContext:
-        {{- toYaml .Values.leaderWriter.deployment.securityContext | nindent 8 }}
-      serviceAccountName: {{ .Values.serviceAccount.name }}
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      serviceAccountName: bank-of-anthos
       terminationGracePeriodSeconds: 5
       volumes:
         - emptyDir: {}

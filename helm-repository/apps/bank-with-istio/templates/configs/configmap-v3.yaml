@@ -11,16 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: v1
-data:
-  {{- range $index, $value := .Values.leaderDb.configmap.data }}
-  {{ $index }}: {{ $value | quote }}
-  {{- end}}
 kind: ConfigMap
 metadata:
-  labels:
-    {{- include "bank-with-istio.helmLabels" . | nindent 4}}
-    {{- range $index, $value := .Values.leaderDb.labels }}
-    {{ $index }}: {{ $value }}
-    {{- end}}
-  name: {{ printf "%s-config" .Values.leaderDb.name }}
+  name: demo-data-config
+data:
+  USE_DEMO_DATA: "True"
+  DEMO_LOGIN_USERNAME: "testuser"
+  # All demo user accounts are hardcoded to use the login password 'bankofanthos'
+  DEMO_LOGIN_PASSWORD: "bankofanthos"

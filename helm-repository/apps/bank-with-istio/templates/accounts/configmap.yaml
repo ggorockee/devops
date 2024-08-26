@@ -13,44 +13,17 @@
 # limitations under the License.
 
 apiVersion: v1
-kind: Service
+data:
+  ACCOUNTS_DB_URI: postgresql://accounts-admin:accounts-pwd@accounts-db:5432/accounts-db
+  POSTGRES_DB: accounts-db
+  POSTGRES_PASSWORD: accounts-pwd
+  POSTGRES_USER: accounts-admin
+kind: ConfigMap
 metadata:
   labels:
-    application: bank-of-anthos
-    environment: development
-    team: accounts
-    tier: db
-  name: accounts-db
-spec:
-  ports:
-    - name: tcp
-      port: 5432
-      protocol: TCP
-      targetPort: 5432
-  selector:
     app: accounts-db
     application: bank-of-anthos
     environment: development
     team: accounts
     tier: db
-  type: ClusterIPapiVersion: v1
-kind: Service
-metadata:
-  labels:
-    application: bank-of-anthos
-    environment: development
-    team: accounts
-    tier: backend
-  name: contacts
-spec:
-  ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
-  selector:
-    app: contacts
-    application: bank-of-anthos
-    environment: development
-    team: accounts
-    tier: backend
-  type: ClusterIP
+  name: accounts-db-config

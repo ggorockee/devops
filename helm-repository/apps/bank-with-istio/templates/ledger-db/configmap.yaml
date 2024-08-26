@@ -11,15 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 apiVersion: v1
 data:
-  {{- range $key, $value := .Values.account.configmap.data }}
-  {{ $key }}: {{ $value | quote }}
-  {{- end}}
+  POSTGRES_DB: postgresdb
+  POSTGRES_PASSWORD: password
+  POSTGRES_USER: admin
+  SPRING_DATASOURCE_PASSWORD: password
+  SPRING_DATASOURCE_URL: jdbc:postgresql://ledger-db:5432/postgresdb
+  SPRING_DATASOURCE_USERNAME: admin
 kind: ConfigMap
 metadata:
   labels:
-    {{- range $key, $value := .Values.account.labels }}
-    {{ $key }}: {{ $value | quote }}
-    {{- end}}
-  name: {{ .Values.account.name }}
+    app: ledger-db
+    application: bank-of-anthos
+    environment: development
+    team: ledger
+    tier: db
+  name: ledger-db-config
