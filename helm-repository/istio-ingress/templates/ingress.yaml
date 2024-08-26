@@ -15,8 +15,7 @@ spec:
         number: 80
 
   rules:
-  - host: '*'
-    http:
+  - http:
       paths:
       - backend:
           service:
