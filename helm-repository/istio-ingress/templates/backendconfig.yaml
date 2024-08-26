@@ -12,8 +12,8 @@ spec:
   healthCheck:
     checkIntervalSec: 30
     healthyThreshold: 1
-    port: 8080
-    requestPath: /healthz
+    port: 15021
+    requestPath: /healthz/ready
     timeoutSec: 5
     type: HTTP
     unhealthyThreshold: 2
