@@ -13,3 +13,15 @@ spec:
       name: istio-ingress
       port:
         number: 80
+
+  rules:
+  - host: '*'
+    http:
+      paths:
+      - backend:
+          service:
+            name: istio-ingress
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
