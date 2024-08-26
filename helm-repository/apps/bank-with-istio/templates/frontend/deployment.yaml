@@ -115,6 +115,8 @@ spec:
             - mountPath: /tmp/.ssh
               name: publickey
               readOnly: true
+          ports:
+          - containerPort: 8080
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -131,3 +133,4 @@ spec:
               - key: jwtRS256.key.pub
                 path: publickey
             secretName: jwt-key
+      
