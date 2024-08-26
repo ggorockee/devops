@@ -23,6 +23,6 @@ spec:
             name: istio-ingress
             port:
               number: 80
-        path: /*
+        path: /
         pathType: Prefix
     host: "*.ggorockee.com"
