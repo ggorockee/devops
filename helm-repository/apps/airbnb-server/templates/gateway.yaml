@@ -4,7 +4,7 @@ metadata:
   name: {{ include "airbnb-server.fullname" . }}
 spec:
   selector:
-    istio: ingressgateway # use Istio default gateway implementation
+    istio: ingressgateway-dev
   servers:
   - port:
       number: 8080
