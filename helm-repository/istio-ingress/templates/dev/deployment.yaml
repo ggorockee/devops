@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/version: 1.22.1
     argocd.argoproj.io/instance: istio-ingress-dev
     helm.sh/chart: istio-ingress-1.22.1
-    istio: ingressgateway
+    istio: ingressgateway-dev
   name: istio-ingress-dev
   namespace: istio-system
 spec:
@@ -18,7 +18,7 @@ spec:
   selector:
     matchLabels:
       app: istio-ingress-dev
-      istio: ingressgateway
+      istio: ingressgateway-dev
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -35,7 +35,7 @@ spec:
       creationTimestamp: null
       labels:
         app: istio-ingress-dev
-        istio: ingressgateway
+        istio: ingressgateway-dev
         sidecar.istio.io/inject: 'true'
     spec:
       containers:
