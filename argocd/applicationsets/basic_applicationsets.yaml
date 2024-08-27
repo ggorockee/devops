@@ -33,6 +33,7 @@ spec:
         syncOptions:
           - CreateNamespace=true
           - PrunePropagationPolicy=foreground
+          - Replace=true
       ignoreDifferences:
       - group: apps
         kind: Deployment

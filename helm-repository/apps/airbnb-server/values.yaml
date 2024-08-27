@@ -8,7 +8,7 @@ image:
   repository: ggorockee/airbnb-server
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "base"
+  tag: "v1.0.0"
 
 imagePullSecrets: []
 nameOverride: ""
