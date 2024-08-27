@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "istio-test-dev.fullname" . }}
+spec:
+  hosts:
+  - "demo1.dev.ggorockee.com"
+  gateways:
+  - {{ include "istio-test-dev.fullname" . }}
+  http:
+  - route:
+    - destination:
+        host: {{ include "istio-test-dev.fullname" . }}
+        port:
+          number: 80
