@@ -4,4 +4,4 @@ metadata:
   name: istio-ingress-dev
 spec:
   domains:
-    - airbnb.dev.ggorockee.com
+  - airbnb.dev.ggorockee.com
