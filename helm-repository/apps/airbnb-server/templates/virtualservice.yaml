@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "airbnb-server.fullname" . }}
+spec:
+  hosts:
+  - "airbnb.dev.ggorockee.com"
+  gateways:
+  - {{ include "airbnb-server.fullname" . }}
+  http:
+  - route:
+    - destination:
+        host: {{ include "airbnb-server.fullname" . }}
+        port:
+          number: 8000
