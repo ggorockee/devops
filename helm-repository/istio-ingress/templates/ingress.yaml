@@ -4,7 +4,8 @@ metadata:
   name: istio-ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: istio-ingress
-    ingress.gcp.kubernetes.io/pre-shared-cert: ggorockee
+    # ingress.gcp.kubernetes.io/pre-shared-cert: ggorockee
+    ingress.gcp.kubernetes.io/pre-shared-cert: projects/ggorockee-2024-08-16/locations/global/certificates/ggorockee
     networking.gke.io/v1beta1.FrontendConfig: istio-ingress
     kubernetes.io/ingress.class: "gce"  # Updated annotation
     kubernetes.io/ingress.allow-http: "true"
