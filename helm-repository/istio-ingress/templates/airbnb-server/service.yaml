@@ -1,65 +1,40 @@
-{{ $serviceName := include "gateway.name" . }}
-{{- if not (eq .Values.service.type "None") }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ printf "%s-dev" $serviceName }}
-  namespace: {{ .Release.Namespace }}
-  labels:
-    {{- include "gateway.labels" . | nindent 4 }}
-    {{- with .Values.networkGateway }}
-    topology.istio.io/network: "{{.}}"
-    {{- end }}
   annotations:
     cloud.google.com/backend-config: '{"default": "istio-ingress-dev"}'
+    cloud.google.com/neg: '{"ingress":true}'
+  labels:
+    app: istio-ingress-dev
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: istio-ingress-dev
+    app.kubernetes.io/version: 1.22.1
+    argocd.argoproj.io/instance: istio-ingress-dev
+    helm.sh/chart: istio-ingress-1.22.1
+    istio: ingressgateway
+  name: istio-ingress-dev
+  namespace: istio-system
 spec:
-{{- with .Values.service.loadBalancerIP }}
-  loadBalancerIP: "{{ . }}"
-{{- end }}
-{{- if eq .Values.service.type "LoadBalancer" }}
-  {{- if hasKey .Values.service "allocateLoadBalancerNodePorts" }}
-  allocateLoadBalancerNodePorts: {{ .Values.service.allocateLoadBalancerNodePorts }}
-  {{- end }}
-{{- end }}
-{{- if .Values.service.ipFamilyPolicy }}
-  ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
-{{- end }}
-{{- if .Values.service.ipFamilies }}
-  ipFamilies:
-{{- range .Values.service.ipFamilies }}
-  - {{ . }}
-{{- end }}
-{{- end }}
-{{- with .Values.service.loadBalancerSourceRanges }}
-  loadBalancerSourceRanges:
-{{ toYaml . | indent 4 }}
-{{- end }}
-{{- with .Values.service.externalTrafficPolicy }}
-  externalTrafficPolicy: "{{ . }}"
-{{- end }}
-  type: {{ .Values.service.type }}
   ports:
-{{- if .Values.networkGateway }}
-  - name: status-port
-    port: 15021
-    targetPort: 15021
-  - name: tls
-    port: 15443
-    targetPort: 15443
-  - name: tls-istiod
-    port: 15012
-    targetPort: 15012
-  - name: tls-webhook
-    port: 15017
-    targetPort: 15017
-{{- else }}
-{{ .Values.service.ports | toYaml | indent 4 }}
-{{- end }}
-{{- if .Values.service.externalIPs }}
-  externalIPs: {{- range .Values.service.externalIPs }}
-    - {{.}}
-  {{- end }}
-{{- end }}
+    - name: status-port
+      nodePort: 30772
+      port: 15021
+      protocol: TCP
+      targetPort: 15021
+    - name: http2
+      nodePort: 31015
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    - name: https
+      nodePort: 31431
+      port: 443
+      protocol: TCP
+      targetPort: 443
   selector:
-    {{- include "gateway.selectorLabels" . | nindent 4 }}
-{{- end }}
+    app: istio-ingress-dev
+    istio: ingressgateway
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
