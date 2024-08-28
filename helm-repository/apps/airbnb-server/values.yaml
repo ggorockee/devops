@@ -15,28 +15,8 @@ podAnnotations: {}
 podLabels: {}
 podSecurityContext: {}
 securityContext: {}
-configmap:
-  - name: haha
-    data:
-      player_initial_lives: '3'
-      ui_properties_file_name: user-interface.properties
-      game.properties: |
-        enemy.types=aliens,monsters
-        player.maximum-lives=5    
-      user-interface.properties: |
-        color.good=purple
-        color.bad=yellow
-  - name: hoho
-    data:
-      player_initial_lives: '3'
-      ui_properties_file_name: user-interface.properties
-      game.properties: |
-        enemy.types=aliens,monsters
-        player.maximum-lives=5    
-      user-interface.properties: |
-        color.good=purple
-        color.bad=yellow
-secret: {}
+configmap: []
+secret: []
 service:
   type: ClusterIP
   port: 8080
@@ -77,6 +57,7 @@ db:
   - name: db-config-map
     data:
       ACCOUNTS_DB_URI: postgresql://accounts-admin:accounts-pwd@accounts-db:5432/accounts-db
+      POSTGRES_HOST: ""
       POSTGRES_DB: accounts-db
       POSTGRES_PASSWORD: accounts-pwd
       POSTGRES_USER: accounts-admin
