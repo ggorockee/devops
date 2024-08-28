@@ -64,6 +64,21 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- if or .Values.db.configmap .Values.db.secret }}
+          envFrom:
+            {{- with .Values.db.configmap }}
+            {{- range . }}
+            - configMapRef:
+                name: {{ .name }}
+            {{- end }}
+            {{- end }}
+            {{- with .Values.db.secret }}
+            {{- range . }}
+            - secretRef:
+                name: {{ .name }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
