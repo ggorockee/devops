@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: ggorockee/airbnb-server
   pullPolicy: Always
-  tag: a6758a
+  tag: '06e839'
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
@@ -21,25 +21,8 @@ service:
   type: ClusterIP
   port: 8080
 resources: {}
-#  limits:
-#    cpu: 100m
-#    memory: 128Mi
-#  requests:
-#    cpu: 100m
-#    memory: 128Mi
 livenessProbe: {}
-#  httpGet:
-#    path: /healthz/ready
-#    port: 8080
 readinessProbe: {}
-#  httpGet:
-#    path: /healthz/ready
-#    port: 8080
-#  initialDelaySeconds: 60
-#  timeoutSeconds: 5
-#  periodSeconds: 10
-#  successThreshold: 2
-#  failureThreshold: 2
 autoscaling:
   enabled: true
   minReplicas: 1
