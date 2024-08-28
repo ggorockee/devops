@@ -27,19 +27,19 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
-livenessProbe:
-  httpGet:
-    path: /healthz/ready
-    port: 8080
-readinessProbe:
-  httpGet:
-    path: /healthz/ready
-    port: 8080
-  initialDelaySeconds: 60
-  timeoutSeconds: 5
-  periodSeconds: 10
-  successThreshold: 2
-  failureThreshold: 2
+livenessProbe: {}
+#  httpGet:
+#    path: /healthz/ready
+#    port: 8080
+readinessProbe: {}
+#  httpGet:
+#    path: /healthz/ready
+#    port: 8080
+#  initialDelaySeconds: 60
+#  timeoutSeconds: 5
+#  periodSeconds: 10
+#  successThreshold: 2
+#  failureThreshold: 2
 autoscaling:
   enabled: true
   minReplicas: 1
