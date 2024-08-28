@@ -15,6 +15,37 @@ podAnnotations: {}
 podLabels: {}
 podSecurityContext: {}
 securityContext: {}
+configmap:
+- name: haha
+  data: 
+    player_initial_lives: "3"
+    ui_properties_file_name: "user-interface.properties"
+
+    # file-like keys
+    game.properties: |
+      enemy.types=aliens,monsters
+      player.maximum-lives=5    
+    user-interface.properties: |
+      color.good=purple
+      color.bad=yellow
+- name: hoho
+  data: 
+    player_initial_lives: "3"
+    ui_properties_file_name: "user-interface.properties"
+
+    # file-like keys
+    game.properties: |
+      enemy.types=aliens,monsters
+      player.maximum-lives=5    
+    user-interface.properties: |
+      color.good=purple
+      color.bad=yellow
+secret: {}
+# - name: test-secret
+#   type: ""
+#   data:
+#     player_initial_lives: "3"
+#     ui_properties_file_name: "user-interface.properties"
 service:
   type: ClusterIP
   port: 8080
