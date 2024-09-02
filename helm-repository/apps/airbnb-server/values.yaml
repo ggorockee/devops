@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: ggorockee/airbnb-server
   pullPolicy: Always
-  tag: 88a11a
+  tag: 3e243a
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
