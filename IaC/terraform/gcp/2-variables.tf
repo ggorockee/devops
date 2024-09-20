@@ -45,8 +45,8 @@ variable "region" {
   default     = ""
 
   validation {
-    condition     = can(regex("^us-west1", var.region))
-    error_message = "The region must start with 'us-west1'."
+    condition     = can(regex("^asia-northeast3", var.region))
+    error_message = "The region must start with 'asia-northeast3'."
   }
 }
 #variable "env" {

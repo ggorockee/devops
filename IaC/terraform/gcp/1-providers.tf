@@ -1,6 +1,6 @@
 provider "google" {
   project     = "ggorockee-2024-08-16"
-  region      = "us-west1"
+  region      = "asia-northeast3"
 }
 
 #provider "kubernetes" {

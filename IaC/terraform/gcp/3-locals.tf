@@ -37,7 +37,7 @@ locals {
   }
 
   k8s = {
-    node_locations = ["us-west1-a", "us-west1-c", "us-west1-b"]
+    node_locations = ["asia-northeast3-a", "asia-northeast3-b", "asia-northeast3-c"]
     remove_default_node_pool = true
     initial_node_count = 1
     logging_service = "logging.googleapis.com/kubernetes"
