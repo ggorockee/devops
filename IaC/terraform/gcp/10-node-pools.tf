@@ -65,6 +65,7 @@ resource "google_container_node_pool" "spot" {
 
   node_config {
     machine_type = local.node_pool.machine_type
+    enable_confidential_storage = false
 
     labels = {
       role = terraform.workspace
@@ -74,7 +75,9 @@ resource "google_container_node_pool" "spot" {
     service_account = data.google_service_account.ggorockee.email
     oauth_scopes = local.node_pool.oauth_scopes
 
-    metadata = local.node_pool.metadata
+    # metadata = {
+    #   disable_legacy_endpoints = true
+    # }
     image_type = local.node_pool.image_type
     disk_type  = local.node_pool.disk_type
 
