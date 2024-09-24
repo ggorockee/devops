@@ -1,0 +1,63 @@
+gatewayset:
+  - name: argocd
+    namespace: argocd
+    hosts:
+      - "argocd.ggorockee.com"
+
+    # gateway
+    servers:
+      - port:
+          number: 80
+          name: http
+          protocol: HTTP
+
+    # virtualservice
+    http:
+      service: argocd-server
+      port:
+        number: 80
+      match:
+        - uri:
+            prefix: /
+
+  - name: kube-prometheus-stack
+    namespace: monitoring
+    hosts:
+      - "prom.dev.ggorockee.com"
+
+    # gateway
+    servers:
+      - port:
+          number: 80
+          name: http
+          protocol: HTTP
+
+    # virtualservice
+    http:
+      service: prometheus-operated
+      port:
+        number: 9090
+      match:
+        - uri:
+            prefix: /
+
+  - name: grafana
+    namespace: monitoring
+    hosts:
+      - "grafana.ggorockee.com"
+
+    # gateway
+    servers:
+      - port:
+          number: 80
+          name: http
+          protocol: HTTP
+
+    # virtualservice
+    http:
+      service: ggorockee-kube-prometheus-stack-grafana
+      port:
+        number: 80
+      match:
+        - uri:
+            prefix: /

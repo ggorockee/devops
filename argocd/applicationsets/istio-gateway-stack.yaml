@@ -1,0 +1,97 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: istio-gateway-stack
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - cluster: ggorockee
+        url: https://kubernetes.default.svc
+
+  template:
+    metadata:
+      name: '{{cluster}}-istio-gateway-stack'
+      namespace: argocd
+    spec:
+      project: ggorockee
+      source:
+        repoURL: https://ggorockee.github.io/helm-repository/chart
+        targetRevision: '1.0.2'
+        chart: istio-gateway-stack
+        helm:
+          values: |
+            gatewayset:
+              - name: argocd
+                namespace: argocd
+                hosts:
+                  - "argocd.ggorockee.com"
+
+                # gateway
+                servers:
+                  - port:
+                      number: 80
+                      name: http
+                      protocol: HTTP
+
+                # virtualservice
+                http:
+                  service: argocd-server
+                  port:
+                    number: 80
+                  match:
+                    - uri:
+                        prefix: /
+
+              - name: kube-prometheus-stack
+                namespace: monitoring
+                hosts:
+                  - "prom.dev.ggorockee.com"
+
+                # gateway
+                servers:
+                  - port:
+                      number: 80
+                      name: http
+                      protocol: HTTP
+
+                # virtualservice
+                http:
+                  service: prometheus-operated
+                  port:
+                    number: 9090
+                  match:
+                    - uri:
+                        prefix: /
+
+              - name: grafana
+                namespace: monitoring
+                hosts:
+                  - "grafana.dev.ggorockee.com"
+
+                # gateway
+                servers:
+                  - port:
+                      number: 80
+                      name: http
+                      protocol: HTTP
+
+                # virtualservice
+                http:
+                  service: ggorockee-kube-prometheus-stack-grafana
+                  port:
+                    number: 80
+                  match:
+                    - uri:
+                        prefix: /
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: monitoring
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
