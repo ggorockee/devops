@@ -1,3 +1,4 @@
 appname: kiali-service-mesh
 project: monitoring
 namespace: monitoring
+ref: kiali-operator
