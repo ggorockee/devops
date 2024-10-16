@@ -1,6 +1,6 @@
 name: prometheus-operator-grafana
 hosts:
-- grafana.dev.dolphindance.co.kr
+- grafana.dev.ggorockee.com
 
 gatewayPort:
   - number: 80
