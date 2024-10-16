@@ -1,10 +1,11 @@
 name: prometheus-operator-grafana
 hosts:
 - grafana.dev.ggorockee.com
+- prom.dev.ggorockee.com
 
 gatewayPort:
   - number: 80
-    name: grafana
+    name: http
     protocol: HTTP
 
 virtualService:
@@ -17,3 +18,8 @@ virtualService:
         host: prometheus-operator-grafana
         port:
           number: 80
+
+    - destination:
+        host: prometheus-operated
+        port:
+          number: 9090
