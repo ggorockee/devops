@@ -1,0 +1,13 @@
+metrics:
+  enabled: true
+
+serviceMonitor:
+  enabled: true
+  additionalLabels: {}
+  interval: 1m
+  scrapeTimeout: 10s
+  metricRelabelings: []
+  relabelings: []
+  
+args:
+- --kubelet-insecure-tls
