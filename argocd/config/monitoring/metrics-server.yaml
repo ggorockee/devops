@@ -1,0 +1,6 @@
+appname: metrics-server
+project: monitoring
+namespace: monitoring
+chartName: metrics-server
+repoURL: https://kubernetes-sigs.github.io/metrics-server
+chartVersion: 3.12.2
