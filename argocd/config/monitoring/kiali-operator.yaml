@@ -1,0 +1,6 @@
+appname: kiali-operator
+project: monitoring
+namespace: kiali-operator
+chartName: kiali-operator
+repoURL: https://kiali.org/helm-charts
+chartVersion: 1.89.3
