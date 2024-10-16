@@ -1,0 +1,19 @@
+name: kibana-service-mesh
+hosts:
+- kibana.dev.ggorockee.com
+
+gatewayPort:
+  - number: 80
+    name: grafana
+    protocol: HTTP
+
+virtualService:
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: elasticsearch-kibana
+        port:
+          number: 80
