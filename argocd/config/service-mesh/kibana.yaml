@@ -1,0 +1,7 @@
+appname: kibana-service-mesh
+project: logging
+namespace: logging
+ref: kibana
+repoURL: https://ggorockee.github.io/helm-repository/chart
+chartName: istio-gateway
+chartVersion: 1.0.0
