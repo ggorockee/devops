@@ -1,0 +1,7 @@
+appname: fluent-bit
+project: logging
+server: https://kubernetes.default.svc
+namespace: logging
+chartName: fluent-bit
+repoURL: https://fluent.github.io/helm-charts
+chartVersion: 0.47.10
