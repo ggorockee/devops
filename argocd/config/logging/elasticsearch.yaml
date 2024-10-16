@@ -1,0 +1,7 @@
+appname: elasticsearch
+project: logging
+namespace: logging
+chartName: elasticsearch
+repoURL: https://charts.bitnami.com/bitnami
+chartVersion: 21.3.21
+ref: kibana
