@@ -1,6 +1,6 @@
 appname: kiali-service-mesh
 project: monitoring
-namespace: monitoring
+namespace: istio-system
 ref: kiali-operator
 repoURL: https://ggorockee.github.io/helm-repository/chart
 chartName: istio-gateway
