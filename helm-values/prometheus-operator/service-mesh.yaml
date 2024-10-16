@@ -1,0 +1,19 @@
+name: prometheus-operator-grafana
+hosts:
+- grafana.dev.dolphindance.co.kr
+
+gatewayPort:
+  - number: 80
+    name: grafana
+    protocol: HTTP
+
+virtualService:
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: prometheus-operator-grafana
+        port:
+          number: 80
