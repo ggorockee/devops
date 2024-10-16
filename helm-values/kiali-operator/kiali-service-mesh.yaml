@@ -1,0 +1,19 @@
+name: kiali
+hosts:
+- kiali.dev.ggorockee.com
+
+gatewayPort:
+  - number: 80
+    name: kiali
+    protocol: HTTP
+
+virtualService:
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: kiali
+        port:
+          number: 20001
