@@ -1,0 +1,104 @@
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+
+    # add serviceMonitor
+  additionalServiceMonitors:
+  - name: promethes-operator-istiod
+    additionalLabels:
+      app: istiod
+    # jobLabel: ""
+    # targetLabels: []
+    # podTargetLabels: []
+    selector:
+      matchLabels:
+        app: istiod
+    namespaceSelector:
+      any: true
+    endpoints:
+    - path: /metrics
+      port: http-monitoring
+    # metricRelabelings: []
+    # - action: keep
+    #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
+    #   sourceLabels: [__name__]
+    
+    # relabelings: []
+    # - sourceLabels: [__meta_kubernetes_pod_node_name]
+    #   separator: ;
+    #   regex: ^(.*)$
+    #   targetLabel: nodename
+    #   replacement: $1
+    #   action: replace
+    
+    # add podMonitor
+  additionalPodMonitors:
+  - name: envoy-stats-monitor
+    # additionalLabels: {}
+    jobLabel: "envoy-stats"
+    selector:
+      matchExpressions:
+      - {key: istio-prometheus-ignore, operator: DoesNotExist}
+    # podTargetLabels: {}
+    # sampleLimit: 0
+    namespaceSelector:
+      any: true
+    podMetricsEndpoints:
+    - path: /stats/prometheus
+      interval: 15s
+      relabelings:
+      - action: keep
+        sourceLabels: [__meta_kubernetes_pod_container_name]
+        regex: "istio-proxy"
+      - action: keep
+        sourceLabels: [__meta_kubernetes_pod_annotationpresent_prometheus_io_scrape]
+      - action: replace
+        regex: (\d+);(([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4})
+        replacement: '[$2]:$1'
+        sourceLabels:
+        - __meta_kubernetes_pod_annotation_prometheus_io_port
+        - __meta_kubernetes_pod_ip
+        targetLabel: __address__
+      - action: replace
+        regex: (\d+);((([0-9]+?)(\.|$)){4})
+        replacement: $2:$1
+        sourceLabels:
+        - __meta_kubernetes_pod_annotation_prometheus_io_port
+        - __meta_kubernetes_pod_ip
+        targetLabel: __address__
+      - action: labeldrop
+        regex: "__meta_kubernetes_pod_label_(.+)"
+      - sourceLabels: [__meta_kubernetes_namespace]
+        action: replace
+        targetLabel: namespace
+      - sourceLabels: [__meta_kubernetes_pod_name]
+        action: replace
+        targetLabel: pod_name
+
+prometheus-node-exporter:
+  prometheus:
+    monitor:
+      relabelings:
+      - sourceLabels: [__meta_kubernetes_pod_node_name]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+
+grafana:
+  envRenderSecret: {}
+  grafana.ini:
+    server:
+      root_url: https://grafana.dev.ggorockee.com
+
+  persistence:
+    type: pvc
+    enabled: true
+    storageClassName: standard
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+    finalizers:
+      - kubernetes.io/pvc-protection
