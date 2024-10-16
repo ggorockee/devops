@@ -1,0 +1,3 @@
+appname: kiali-service-mesh
+project: monitoring
+namespace: monitoring
