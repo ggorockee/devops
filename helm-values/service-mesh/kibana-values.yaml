@@ -4,7 +4,7 @@ hosts:
 
 gatewayPort:
   - number: 80
-    name: grafana
+    name: http
     protocol: HTTP
 
 virtualService:
@@ -16,4 +16,4 @@ virtualService:
     - destination:
         host: elasticsearch-kibana
         port:
-          number: 80
+          number: 5601
