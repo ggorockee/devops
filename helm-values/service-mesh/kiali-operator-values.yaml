@@ -16,4 +16,4 @@ virtualService:
     - destination:
         host: kiali
         port:
-          number: 2001
+          number: 20001
