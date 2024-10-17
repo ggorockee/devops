@@ -4,7 +4,7 @@ hosts:
 
 gatewayPort:
   - number: 80
-    name: grafana
+    name: http
     protocol: HTTP
 
 virtualService:
