@@ -4,7 +4,7 @@ hosts:
 
 gatewayPort:
   - number: 80
-    name: prometheus
+    name: http
     protocol: HTTP
 
 virtualService:
