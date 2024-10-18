@@ -24,6 +24,6 @@ istioGateway:
   - api-airbnb.dev.ggorockee.com
 
   gatewayPort:
-    - number: 8000
+    - number: 80
       name: http
       protocol: HTTP
