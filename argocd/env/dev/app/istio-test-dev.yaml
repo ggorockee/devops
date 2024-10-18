@@ -1,4 +1,0 @@
-namespace: istio-test-dev
-app_name: istio-test-dev
-chart_name: istio-test-dev
-project: ggorockee

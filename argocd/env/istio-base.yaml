@@ -1,4 +1,0 @@
-namespace: istio-system
-app_name: istio-crd
-chart_name: istio-base
-project: ggorockee

@@ -1,4 +1,0 @@
-namespace: istio-system
-app_name: istiod
-chart_name: istiod
-project: ggorockee
