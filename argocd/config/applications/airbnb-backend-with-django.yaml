@@ -1,0 +1,6 @@
+appname: airbnb-backend-with-django
+project: application
+namespace: airbnb-dev
+chartName: restframework
+repoURL: https://ggorockee.github.io/helm-repository/chart
+chartVersion: 1.0.1
