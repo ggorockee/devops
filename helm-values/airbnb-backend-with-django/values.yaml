@@ -1,1 +1,29 @@
-# this is value
+app:
+  image:
+    repository: ggorockee/airbnb-backend-with-django
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "latest"
+
+  livenessProbe: {}
+    # httpGet:
+    #   path: /
+    #   port: http
+    # initialDelaySeconds: 10 
+
+  readinessProbe: {}
+    # httpGet:
+    #   path: /
+    #   port: http
+
+istioGateway:
+  enabled: true
+  type: "istio"
+
+  hosts:
+  - api-airbnb.dev.ggorockee.com
+
+  gatewayPort:
+    - number: 80
+      name: http
+      protocol: HTTP
