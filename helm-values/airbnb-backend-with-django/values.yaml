@@ -2,7 +2,7 @@ app:
   image:
     repository: ggorockee/airbnb-backend-with-django
     pullPolicy: Always
-    tag: ''
+    tag: ceaf1e
   livenessProbe: {}
   readinessProbe: {}
 istioGateway:
