@@ -3,4 +3,4 @@ project: application
 namespace: airbnb-dev
 chartName: restframework
 repoURL: https://ggorockee.github.io/helm-repository/chart
-chartVersion: 1.0.1
+chartVersion: 1.0.2
