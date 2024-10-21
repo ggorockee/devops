@@ -89,9 +89,28 @@ prometheus-node-exporter:
 
 grafana:
   envRenderSecret: {}
+  envFromSecrets:
+  - name: grafana-azure-secret
+
   grafana.ini:
     server:
       root_url: https://grafana.dev.ggorockee.com
+    auth.azuread:
+      name: Teams
+      enabled: true
+      allow_sign_up: true
+      auto_login: false
+      client_id: ${AZURE_CLIENT_ID}
+      client_secret: ${AZURE_CLIENT_SECRET}
+      scopes: openid email profile
+      auth_url: ${AZURE_AUTH_URL}
+      token_url: ${AZURE_TOKEN_URL}
+      # allowed_groups: ${AZURE_ADMIN_GROUP}
+      allowed_organizations: ${AZURE_TENANT_ID}
+      role_attribute_strict: false
+      allow_assign_grafana_admin: true
+      skip_org_role_sync: false
+      use_pkce: true
 
   persistence:
     type: pvc
