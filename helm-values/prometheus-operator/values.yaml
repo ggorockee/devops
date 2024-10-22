@@ -124,7 +124,7 @@ grafana:
       token_url: https://oauth2.googleapis.com/token
       api_url: https://openidconnect.googleapis.com/v1/userinfo
       allowed_domains: gmail.com
-      hosted_domain: grafana.dev.ggorockee.com
+      hosted_domain: gmail.com
       use_pkce: true
 
   persistence:
