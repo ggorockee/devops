@@ -129,7 +129,7 @@ grafana:
       use_pkce: true
       # org_mapping: devops:ggorockee.com:Admin viewer:ggorockee.com:Viewer
       # allowed_groups: devops@google.com, viewer@google.com
-      role_attribute_path: contains(groups[*], 'devops@ggorockee.com') && 'Admin' || 'Viewer'
+      role_attribute_path: contains(groups[*], 'devops@ggorockee.com') && 'Admin' || 'Editor'
       skip_org_role_sync: false
 
   persistence:
