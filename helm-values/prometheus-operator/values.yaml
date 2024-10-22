@@ -128,7 +128,7 @@ grafana:
       hosted_domain: gmail.com
       use_pkce: true
       # allowed_groups: devops@google.com, viewer@google.com
-      role_attribute_path: contains(groups[*], 'devops_ggorockee@googlegroups.com') && 'Admin' || 'Viewer'
+      # role_attribute_path: contains(groups[*], 'devops_ggorockee@googlegroups.com') && 'Admin' || 'Viewer'
       skip_org_role_sync: false
 
   persistence:
