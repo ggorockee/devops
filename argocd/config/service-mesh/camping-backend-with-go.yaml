@@ -1,0 +1,7 @@
+appname: camping-backend-service-mesh
+project: application
+namespace: camping
+ref: camping-backend
+repoURL: https://ggorockee.github.io/helm-repository/chart
+chartName: istio-gateway
+chartVersion: 1.0.0
