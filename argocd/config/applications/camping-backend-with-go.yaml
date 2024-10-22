@@ -3,4 +3,4 @@ project: application
 namespace: camping
 chartName: camping-backend-with-go 
 repoURL: https://ggorockee.github.io/helm-repository/chart
-chartVersion: 1.0.4
+chartVersion: 1.0.5
