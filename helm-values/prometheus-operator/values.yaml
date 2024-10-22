@@ -127,10 +127,10 @@ grafana:
       allowed_domains: ggorockee.com
       hosted_domain: ggorockee.com
       use_pkce: true
-      org_mapping: devops:ggorockee.com:Admin viewer:ggorockee.com:Viewer
+      # org_mapping: devops:ggorockee.com:Admin viewer:ggorockee.com:Viewer
       # allowed_groups: devops@google.com, viewer@google.com
-      # role_attribute_path: contains(groups[*], 'devops_ggorockee@googlegroups.com') && 'Admin' || 'Viewer'
-      # skip_org_role_sync: false
+      role_attribute_path: contains(groups[*], 'devops@ggorockee.com') && 'Admin' || 'Viewer'
+      skip_org_role_sync: false
 
   persistence:
     type: pvc
