@@ -16,4 +16,4 @@ virtualService:
     - destination:
         host: teleport-cluster
         port:
-          number: 443
+          number: 3080
