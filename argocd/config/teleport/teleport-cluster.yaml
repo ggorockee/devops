@@ -1,0 +1,6 @@
+appname: teleport-cluster
+project: teleport
+namespace: teleport
+chartName: teleport-cluster
+repoURL: https://charts.releases.teleport.dev
+chartVersion: 16.4.6
