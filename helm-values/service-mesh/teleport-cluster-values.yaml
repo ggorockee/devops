@@ -1,6 +1,6 @@
 name: teleport-cluster
 hosts:
-- teleport.dev.ggorockee.com
+- teleport22222.dev.ggorockee.com
 
 gatewayPort:
   - number: 80
