@@ -29,7 +29,7 @@ proxy:
       # optionally override the public addresses for the cluster
       public_addr: teleport.dev.ggorockee.com:443
       tunnel_public_addr: teleport.dev.ggorockee.com:3024
-      web_listen_addr: 0.0.0.0:443
+      web_listen_addr: 0.0.0.0:3080
 
 authentication:
   # Default authentication type. Possible values are 'local' and 'github' for OSS, plus 'oidc' and 'saml' for Enterprise.
