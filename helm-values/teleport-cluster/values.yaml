@@ -100,7 +100,7 @@ authentication:
 # To use an ingress, set proxyListenerMode=multiplex, ingress.enabled=true and service.type=ClusterIP
 #
 # Possible values are 'separate' and 'multiplex'
-proxyListenerMode: "multiplex"
+proxyListenerMode: "separate"
 
 # Optional setting for configuring session recording.
 # See `session_recording` under https://goteleport.com/docs/setup/reference/config/#teleportyaml
@@ -159,7 +159,7 @@ tunnelPublicAddr: []
 # Setting acme to 'true' enables the ACME protocol and will attempt to get a free TLS certificate from Let's Encrypt.
 # Setting acme to 'false' (the default) will cause Teleport to generate and use self-signed certificates for its web UI.
 # This section is mutually exclusive with the "tls" value below.
-acme: true
+acme: false
 # acmeEmail is the email address to provide during certificate registration (this is a Let's Encrypt requirement)
 acmeEmail: "ggorockee@gmail.com"
 # acmeURI is the ACME server to use for getting certificates. The default is to use Let's Encrypt's production server.
