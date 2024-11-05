@@ -100,7 +100,7 @@ authentication:
 # To use an ingress, set proxyListenerMode=multiplex, ingress.enabled=true and service.type=ClusterIP
 #
 # Possible values are 'separate' and 'multiplex'
-proxyListenerMode: "separate"
+proxyListenerMode: "multiplex"
 
 # Optional setting for configuring session recording.
 # See `session_recording` under https://goteleport.com/docs/setup/reference/config/#teleportyaml
