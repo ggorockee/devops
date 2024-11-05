@@ -12,6 +12,7 @@ auth:
 
     auth_service:
       enabled: true
+      proxy_listener_mode: multiplex
       web_idle_timeout: 1h
       authentication:
         locking_mode: best_effort
