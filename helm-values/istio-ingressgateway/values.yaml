@@ -142,11 +142,17 @@ defaults:
 
   # A list of `Volumes` added into the Gateway Pods. See
   # https://kubernetes.io/docs/concepts/storage/volumes/.
-  volumes: []
+  volumes:
+  - name: ingressgateway-certs
+    secret:
+      secretName: istio-tls
 
   # A list of `VolumeMounts` added into the Gateway Pods. See
   # https://kubernetes.io/docs/concepts/storage/volumes/.
-  volumeMounts: []
+  volumeMounts:
+  - name: ingressgateway-certs
+    readOnly: true
+    mountPath: /etc/istio/ingressgateway-certs
 
   # Configure this to a higher priority class in order to make sure your Istio gateway pods
   # will not be killed because of low priority class.
