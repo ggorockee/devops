@@ -1,0 +1,6 @@
+roles: kube,app,discovery
+authToken: a9f6a212877ec6539b7707567354871b
+proxyAddr: teleport.dev.ggorockee.com:443
+kubeClusterName: ggorockee
+labels:
+    teleport.internal/resource-id: 7076858e-a0dd-4dfe-ad8d-09fd541d1b24

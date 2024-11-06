@@ -1,0 +1,6 @@
+appname: teleport-kube-agent
+project: teleport
+namespace: teleport
+chartName: teleport-kube-agent
+repoURL: https://charts.releases.teleport.dev
+chartVersion: 16.4.6
