@@ -1,7 +1,0 @@
-appname: teleport-cluster-service-mesh
-project: teleport
-namespace: teleport
-ref: teleport-cluster
-repoURL: https://ggorockee.github.io/helm-repository/chart
-chartName: istio-gateway
-chartVersion: 1.0.0
