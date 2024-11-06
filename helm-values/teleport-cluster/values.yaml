@@ -467,7 +467,7 @@ tls:
   # Name of an existing secret to use which contains a TLS keypair. Will automatically set the https_keypairs section in teleport.yaml.
   # Create the secret in the same namespace as Teleport using `kubectl create secret tls my-tls-secret --cert=/path/to/cert/file --key=/path/to/key/file`
   # See https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets for more information.
-  existingSecretName: ""
+  existingSecretName: "teleport-tls"
   # (optional) Name of an existing secret to use which contains a CA or trust bundle in x509 PEM format.
   # Useful for building trust when using intermediate certificate authorities.
   # This will automatically set the SSL_CERT_FILE environment variable to trust the CA.
