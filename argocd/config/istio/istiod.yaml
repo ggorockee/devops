@@ -1,0 +1,6 @@
+appname: istiod
+project: istio
+namespace: istio-system
+chartName: istiod
+repoURL: https://istio-release.storage.googleapis.com/charts
+chartVersion: 1.23.3
