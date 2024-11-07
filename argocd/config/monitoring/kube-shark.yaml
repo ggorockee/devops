@@ -1,0 +1,6 @@
+appname: kubeshark
+project: monitoring
+namespace: monitoring
+chartName: kubeshark
+repoURL: https://helm.kubeshark.co
+chartVersion: 52.3.88
