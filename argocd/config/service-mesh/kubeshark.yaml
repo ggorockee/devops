@@ -1,0 +1,7 @@
+appname: kubeshark-service-mesh
+project: monitoring
+namespace: monitoring
+ref: kubeshark
+repoURL: https://ggorockee.github.io/helm-repository/chart
+chartName: istio-gateway
+chartVersion: 1.0.0

@@ -1,0 +1,19 @@
+name: kubeshark-service-mesh
+hosts:
+- kubeshark.dev.ggorockee.com
+
+gatewayPort:
+  - number: 80
+    name: http
+    protocol: HTTP
+
+virtualService:
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: kubeshark-front
+        port:
+          number: 80
